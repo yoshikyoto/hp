@@ -309,7 +309,7 @@ var $$ = Object.create(null);
     toString$0: function(receiver) {
       return H.Primitives_objectToString(receiver);
     },
-    "%": "ApplicationCacheErrorEvent|AutocompleteErrorEvent|ClipboardEvent|DOMError|ErrorEvent|Event|FileError|InputEvent|MediaError|MediaKeyError|Navigator|NavigatorCPU|NavigatorUserMediaError|PositionError|SQLError|SpeechRecognitionError"
+    "%": "ApplicationCacheErrorEvent|AutocompleteErrorEvent|ClipboardEvent|DOMError|DOMImplementation|ErrorEvent|Event|FileError|InputEvent|MediaError|MediaKeyError|Navigator|NavigatorCPU|NavigatorUserMediaError|PositionError|SQLError|SVGAnimatedLength|SpeechRecognitionError"
   },
   JSBool: {
     "^": "Interceptor;",
@@ -350,72 +350,42 @@ var $$ = Object.create(null);
   },
   JSArray: {
     "^": "Interceptor;",
-    add$1: function(receiver, value) {
-      H.assertSubtypeOfRuntimeType(value, H.getTypeArgumentByIndex(receiver, 0));
-      if (!!receiver.fixed$length)
-        H.throwExpression(P.UnsupportedError$("add"));
-      receiver.push(value);
-    },
     forEach$1: function(receiver, f) {
-      var t1, t2, $length, i, t3;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [H.convertRtiToRuntimeType(receiver.$builtinTypeInfo && receiver.$builtinTypeInfo[0])])._assertCheck$1(f);
-      t2 = new J.JSArray_forEach_getLength(receiver);
-      $length = H.intTypeCheck(t2.call$0());
-      for (i = 0; C.JSInt_methods.$lt(i, $length); ++i) {
-        t1.call$1(receiver[i]);
-        t3 = t2.call$0();
-        if ($length == null ? t3 != null : $length !== t3)
+      var t1, $length, i;
+      t1 = new J.JSArray_forEach_getLength(receiver);
+      $length = t1.call$0();
+      if (typeof $length !== "number")
+        return H.iae($length);
+      i = 0;
+      for (; i < $length; ++i) {
+        f.call$1(receiver[i]);
+        if ($length !== t1.call$0())
           throw H.wrapException(P.ConcurrentModificationError$(receiver));
       }
-    },
-    join$1: function(receiver, separator) {
-      var t1, list, i, t2;
-      t1 = receiver.length;
-      list = Array(t1);
-      list.fixed$length = init;
-      for (i = 0; i < receiver.length; ++i) {
-        t2 = H.S(receiver[i]);
-        if (i >= t1)
-          return H.ioore(list, i);
-        list[i] = t2;
-      }
-      return list.join(separator);
     },
     elementAt$1: function(receiver, index) {
       if (index < 0 || index >= receiver.length)
         return H.ioore(receiver, index);
-      return H.assertSubtypeOfRuntimeType(receiver[index], H.getTypeArgumentByIndex(receiver, 0));
-    },
-    get$last: function(receiver) {
-      var t1 = receiver.length;
-      if (t1 > 0)
-        return H.assertSubtypeOfRuntimeType(receiver[t1 - 1], H.getTypeArgumentByIndex(receiver, 0));
-      throw H.wrapException(P.StateError$("No elements"));
+      return receiver[index];
     },
     toString$0: function(receiver) {
       return P.IterableBase_iterableToFullString(receiver, "[", "]");
     },
     toList$1$growable: function(receiver, growable) {
-      var t1, t2;
-      if (growable) {
-        t1 = H.getTypeArgumentByIndex(receiver, 0);
-        return H.assertSubtype(H.assertSubtype(H.setRuntimeTypeInfo(H.assertSubtype(receiver.slice(), "$isJSArray", [t1], "$asJSArray"), [t1]), "$isJSArray", [t1], "$asJSArray"), "$isList", [H.getTypeArgumentByIndex(receiver, 0)], "$asList");
-      } else {
-        t1 = H.getTypeArgumentByIndex(receiver, 0);
-        t2 = H.setRuntimeTypeInfo(H.assertSubtype(receiver.slice(), "$isJSArray", [t1], "$asJSArray"), [t1]);
-        t2.fixed$length = init;
-        return H.assertSubtype(H.assertSubtype(t2, "$isJSArray", [t1], "$asJSArray"), "$isList", [H.getTypeArgumentByIndex(receiver, 0)], "$asList");
+      var t1;
+      if (growable)
+        return H.setRuntimeTypeInfo(receiver.slice(), [H.getTypeArgumentByIndex(receiver, 0)]);
+      else {
+        t1 = H.setRuntimeTypeInfo(receiver.slice(), [H.getTypeArgumentByIndex(receiver, 0)]);
+        t1.fixed$length = init;
+        return t1;
       }
     },
     toList$0: function($receiver) {
       return this.toList$1$growable($receiver, true);
     },
     get$iterator: function(receiver) {
-      var t1, t2;
-      t1 = H.getTypeArgumentByIndex(receiver, 0);
-      H.listSuperNativeTypeCheck(receiver, "$isIterable");
-      t2 = receiver.length;
-      return H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(receiver, "$isIterable"), t2, 0, H.assertSubtypeOfRuntimeType(null, t1)), [t1]), "$isIterator", [H.getTypeArgumentByIndex(receiver, 0)], "$asIterator");
+      return new H.ListIterator(receiver, receiver.length, 0, null);
     },
     get$hashCode: function(receiver) {
       return H.Primitives_objectHashCode(receiver);
@@ -423,19 +393,13 @@ var $$ = Object.create(null);
     get$length: function(receiver) {
       return receiver.length;
     },
-    $isJSArray: true,
-    $isList: true,
-    $asList: null,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null
+    $isJSArray: true
   },
   JSArray_forEach_getLength: {
-    "^": "Closure:5;this_0",
+    "^": "Closure;this_0",
     call$0: function() {
       return this.this_0.length;
-    },
-    $isFunction: true
+    }
   },
   JSNumber: {
     "^": "Interceptor;",
@@ -448,6 +412,9 @@ var $$ = Object.create(null);
     get$hashCode: function(receiver) {
       return receiver & 0x1FFFFFFF;
     },
+    $add: function(receiver, other) {
+      return receiver + other;
+    },
     _shrOtherPositive$1: function(receiver, other) {
       var t1;
       if (receiver > 0)
@@ -457,16 +424,6 @@ var $$ = Object.create(null);
         t1 = receiver >> t1 >>> 0;
       }
       return t1;
-    },
-    $lt: function(receiver, other) {
-      if (typeof other !== "number")
-        throw H.wrapException(P.ArgumentError$(other));
-      return receiver < other;
-    },
-    $gt: function(receiver, other) {
-      if (typeof other !== "number")
-        throw H.wrapException(P.ArgumentError$(other));
-      return receiver > other;
     },
     $isnum: true,
     static: {"^": "JSNumber__MIN_INT32,JSNumber__MAX_INT32"}
@@ -514,10 +471,10 @@ var $$ = Object.create(null);
       H.checkInt(endIndex);
       if (startIndex < 0)
         throw H.wrapException(P.RangeError$value(startIndex));
-      if (C.JSInt_methods.$gt(startIndex, endIndex))
-        throw H.wrapException(P.RangeError$value(startIndex));
       if (typeof endIndex !== "number")
-        return endIndex.$gt();
+        return H.iae(endIndex);
+      if (startIndex > endIndex)
+        throw H.wrapException(P.RangeError$value(startIndex));
       if (endIndex > receiver.length)
         throw H.wrapException(P.RangeError$value(endIndex));
       return receiver.substring(startIndex, endIndex);
@@ -545,8 +502,7 @@ var $$ = Object.create(null);
     get$length: function(receiver) {
       return receiver.length;
     },
-    $isString: true,
-    $isPattern: true
+    $isString: true
   }
 }],
 ["_js_helper", "dart:_js_helper", , H, {
@@ -586,8 +542,32 @@ var $$ = Object.create(null);
     }
     return hash;
   },
+  Primitives__throwFormatException: [function(string) {
+    throw H.wrapException(P.FormatException$(string, null, null));
+  }, "call$1", "Primitives__throwFormatException$closure", 2, 0, 0],
+  Primitives_parseInt: function(source, radix, handleError) {
+    var match, t1;
+    handleError = H.Primitives__throwFormatException$closure();
+    H.checkString(source);
+    match = /^\s*[+-]?((0x[a-f0-9]+)|(\d+)|([a-z0-9]+))\s*$/i.exec(source);
+    if (match != null) {
+      t1 = match.length;
+      if (2 >= t1)
+        return H.ioore(match, 2);
+      if (match[2] != null)
+        return parseInt(source, 16);
+      if (3 >= t1)
+        return H.ioore(match, 3);
+      if (match[3] != null)
+        return parseInt(source, 10);
+      return handleError.call$1(source);
+    }
+    if (match == null)
+      return handleError.call$1(source);
+    return parseInt(source, 10);
+  },
   Primitives_objectTypeName: function(object) {
-    var $name, decompiled, t1;
+    var $name, decompiled;
     $name = C.JS_CONST_8ZY(J.getInterceptor(object));
     if ($name === "Object") {
       decompiled = String(object.constructor).match(/^\s*function\s*(\S*)\s*\(/)[1];
@@ -596,9 +576,7 @@ var $$ = Object.create(null);
     }
     if ($name.length > 1 && C.JSString_methods.codeUnitAt$1($name, 0) === 36)
       $name = C.JSString_methods.substring$1($name, 1);
-    t1 = H.getRuntimeTypeInfo(object);
-    H.listTypeCheck(t1);
-    return ($name + H.joinArguments(t1, 0, null)).replace(/[^<,> ]+/g, function(m) {
+    return ($name + H.joinArguments(H.getRuntimeTypeInfo(object), 0, null)).replace(/[^<,> ]+/g, function(m) {
       return init.mangledGlobalNames[m] || m;
     });
   },
@@ -630,6 +608,9 @@ var $$ = Object.create(null);
   checkInt: function(value) {
     return value;
   },
+  checkString: function(value) {
+    return value;
+  },
   wrapException: function(ex) {
     var wrapper;
     if (ex == null)
@@ -656,24 +637,22 @@ var $$ = Object.create(null);
       return H.Primitives_objectHashCode(object);
   },
   invokeClosure: function(closure, isolate, numberOfArguments, arg1, arg2, arg3, arg4) {
-    H.interceptedTypeCheck(closure, "$isFunction");
-    H.intTypeCheck(numberOfArguments);
-    if (numberOfArguments === 0)
+    var t1 = J.getInterceptor(numberOfArguments);
+    if (t1.$eq(numberOfArguments, 0))
       return new H.invokeClosure_closure(closure).call$0();
-    else if (numberOfArguments === 1)
+    else if (t1.$eq(numberOfArguments, 1))
       return new H.invokeClosure_closure0(closure, arg1).call$0();
-    else if (numberOfArguments === 2)
+    else if (t1.$eq(numberOfArguments, 2))
       return new H.invokeClosure_closure1(closure, arg1, arg2).call$0();
-    else if (numberOfArguments === 3)
+    else if (t1.$eq(numberOfArguments, 3))
       return new H.invokeClosure_closure2(closure, arg1, arg2, arg3).call$0();
-    else if (numberOfArguments === 4)
+    else if (t1.$eq(numberOfArguments, 4))
       return new H.invokeClosure_closure3(closure, arg1, arg2, arg3, arg4).call$0();
     else
       throw H.wrapException(P.Exception_Exception("Unsupported number of arguments for wrapped closure"));
   },
   convertDartClosureToJS: function(closure, arity) {
     var $function;
-    H.intTypeCheck(arity);
     if (closure == null)
       return;
     $function = closure.$identity;
@@ -707,9 +686,7 @@ var $$ = Object.create(null);
       $constructor = t1;
     } else {
       t1 = $.Closure_functionCounter;
-      if (typeof t1 !== "number")
-        return t1.$add();
-      $.Closure_functionCounter = t1 + 1;
+      $.Closure_functionCounter = J.$add$ns(t1, 1);
       t1 = new Function("a", "b", "c", "d", "this.$initialize(a,b,c,d);" + t1);
       $constructor = t1;
     }
@@ -818,12 +795,9 @@ var $$ = Object.create(null);
       }
       t1 = "return function(){return this." + H.S(t1) + "." + H.S(stubName) + "();";
       t2 = $.Closure_functionCounter;
-      if (typeof t2 !== "number")
-        return t2.$add();
-      $.Closure_functionCounter = t2 + 1;
-      return new Function(t1 + t2 + "}")();
+      $.Closure_functionCounter = J.$add$ns(t2, 1);
+      return new Function(t1 + H.S(t2) + "}")();
     }
-    H.assertHelper(1 <= arity && arity < 27);
     $arguments = "abcdefghijklmnopqrstuvwxyz".split("").splice(0, arity).join(",");
     t1 = "return function(" + $arguments + "){return this.";
     t2 = $.BoundClosure_selfFieldNameCache;
@@ -833,10 +807,8 @@ var $$ = Object.create(null);
     }
     t2 = t1 + H.S(t2) + "." + H.S(stubName) + "(" + $arguments + ");";
     t1 = $.Closure_functionCounter;
-    if (typeof t1 !== "number")
-      return t1.$add();
-    $.Closure_functionCounter = t1 + 1;
-    return new Function(t2 + t1 + "}")();
+    $.Closure_functionCounter = J.$add$ns(t1, 1);
+    return new Function(t2 + H.S(t1) + "}")();
   },
   Closure_cspForwardInterceptedCall: function(arity, isSuperCall, $name, $function) {
     var getSelf, getReceiver;
@@ -909,159 +881,24 @@ var $$ = Object.create(null);
     if (arity === 1) {
       t1 = "return function(){return this." + H.S(selfField) + "." + H.S(stubName) + "(this." + H.S(t1) + ");";
       t2 = $.Closure_functionCounter;
-      if (typeof t2 !== "number")
-        return t2.$add();
-      $.Closure_functionCounter = t2 + 1;
-      return new Function(t1 + t2 + "}")();
+      $.Closure_functionCounter = J.$add$ns(t2, 1);
+      return new Function(t1 + H.S(t2) + "}")();
     }
-    H.assertHelper(1 < arity && arity < 28);
     $arguments = "abcdefghijklmnopqrstuvwxyz".split("").splice(0, arity - 1).join(",");
     t1 = "return function(" + $arguments + "){return this." + H.S(selfField) + "." + H.S(stubName) + "(this." + H.S(t1) + ", " + $arguments + ");";
     t2 = $.Closure_functionCounter;
-    if (typeof t2 !== "number")
-      return t2.$add();
-    $.Closure_functionCounter = t2 + 1;
-    return new Function(t1 + t2 + "}")();
+    $.Closure_functionCounter = J.$add$ns(t2, 1);
+    return new Function(t1 + H.S(t2) + "}")();
   },
   closureFromTearOff: function(receiver, functions, reflectionInfo, isStatic, jsArguments, $name) {
-    H.listTypeCheck(functions);
     functions.fixed$length = init;
-    H.listTypeCheck(reflectionInfo);
     reflectionInfo.fixed$length = init;
     return H.Closure_fromTearOff(receiver, functions, reflectionInfo, !!isStatic, jsArguments, $name);
   },
-  boolConversionCheck: function(value) {
-    if (typeof value === "boolean")
-      return value;
-    H.boolTypeCheck(value);
-    H.assertHelper(value != null);
-    return false;
-  },
-  stringTypeCheck: function(value) {
-    if (value == null)
-      return value;
-    if (typeof value === "string")
-      return value;
-    throw H.wrapException(H.TypeErrorImplementation$(value, "String"));
-  },
-  numTypeCheck: function(value) {
-    if (value == null)
-      return value;
-    if (typeof value === "number")
-      return value;
-    throw H.wrapException(H.TypeErrorImplementation$(value, "num"));
-  },
-  boolTypeCheck: function(value) {
-    if (value == null)
-      return value;
-    if (typeof value === "boolean")
-      return value;
-    throw H.wrapException(H.TypeErrorImplementation$(value, "bool"));
-  },
-  intTypeCheck: function(value) {
-    if (value == null)
-      return value;
-    if (typeof value === "number" && Math.floor(value) === value)
-      return value;
-    throw H.wrapException(H.TypeErrorImplementation$(value, "int"));
-  },
-  propertyTypeError: function(value, property) {
-    var t1 = J.getInterceptor$asx(property);
-    throw H.wrapException(H.TypeErrorImplementation$(value, t1.substring$2(property, 3, t1.get$length(property))));
-  },
-  interceptedTypeCheck: function(value, property) {
-    if (value == null)
-      return value;
-    if (typeof value === "object" && J.getInterceptor(value)[property])
-      return value;
-    H.propertyTypeError(value, property);
-  },
-  stringSuperNativeTypeCheck: function(value, property) {
-    if (value == null)
-      return value;
-    if (typeof value === "string")
-      return value;
-    if (J.getInterceptor(value)[property])
-      return value;
-    H.propertyTypeError(value, property);
-  },
-  listTypeCheck: function(value) {
-    if (value == null)
-      return value;
-    if (!!J.getInterceptor(value).$isList)
-      return value;
-    throw H.wrapException(H.TypeErrorImplementation$(value, "List"));
-  },
-  listSuperNativeTypeCheck: function(value, property) {
-    if (value == null)
-      return value;
-    if (!!J.getInterceptor(value).$isList)
-      return value;
-    if (J.getInterceptor(value)[property])
-      return value;
-    H.propertyTypeError(value, property);
-  },
-  voidTypeCheck: function(value) {
-    if (value == null)
-      return value;
-    throw H.wrapException(H.TypeErrorImplementation$(value, "void"));
-  },
-  assertHelper: function(condition) {
-    if (typeof condition !== "boolean") {
-      if (!!J.getInterceptor(condition).$isFunction)
-        condition = condition.call$0();
-      if (typeof condition !== "boolean")
-        throw H.wrapException(H.TypeErrorImplementation$(condition, "bool"));
-    }
-    if (true !== condition)
-      throw H.wrapException(P.AssertionError$());
-  },
   throwCyclicInit: function(staticName) {
-    throw H.wrapException(P.CyclicInitializationError$("Cyclic initialization for static " + H.S(H.stringTypeCheck(staticName))));
-  },
-  buildFunctionType: function(returnType, parameterTypes, optionalParameterTypes) {
-    H.interceptedTypeCheck(returnType, "$isRuntimeType");
-    H.assertSubtype(parameterTypes, "$isList", [H.RuntimeType], "$asList");
-    H.assertSubtype(optionalParameterTypes, "$isList", [H.RuntimeType], "$asList");
-    return new H.RuntimeFunctionType(returnType, H.assertSubtype(parameterTypes, "$isList", [H.RuntimeType], "$asList"), H.assertSubtype(optionalParameterTypes, "$isList", [H.RuntimeType], "$asList"), null);
-  },
-  buildInterfaceType: function(rti, typeArguments) {
-    var $name = rti.name;
-    if (typeArguments == null || typeArguments.length === 0)
-      return new H.RuntimeTypePlain($name);
-    H.assertSubtype(typeArguments, "$isList", [H.RuntimeType], "$asList");
-    return new H.RuntimeTypeGeneric($name, H.assertSubtype(typeArguments, "$isList", [H.RuntimeType], "$asList"), null);
-  },
-  getDynamicRuntimeType: function() {
-    return C.C_DynamicRuntimeType;
-  },
-  getVoidRuntimeType: function() {
-    return C.C_VoidRuntimeType;
-  },
-  convertRtiToRuntimeType: function(rti) {
-    var list, t1, $name, $arguments, i;
-    if (rti == null)
-      return C.C_DynamicRuntimeType;
-    else if (typeof rti == "function")
-      return new H.RuntimeTypePlain(rti.name);
-    else if (rti.constructor == Array) {
-      list = rti;
-      t1 = list.length;
-      if (0 >= t1)
-        return H.ioore(list, 0);
-      $name = list[0].name;
-      $arguments = [];
-      for (i = 1; i < t1; ++i)
-        C.JSArray_methods.add$1($arguments, H.convertRtiToRuntimeType(list[i]));
-      H.assertSubtype($arguments, "$isList", [H.RuntimeType], "$asList");
-      return new H.RuntimeTypeGeneric($name, H.assertSubtype($arguments, "$isList", [H.RuntimeType], "$asList"), rti);
-    } else if ("func" in rti)
-      return C.C_DynamicRuntimeType;
-    else
-      throw H.wrapException(H.RuntimeError$("Cannot convert '" + JSON.stringify(rti) + "' to RuntimeType."));
+    throw H.wrapException(P.CyclicInitializationError$("Cyclic initialization for static " + H.S(staticName)));
   },
   setRuntimeTypeInfo: function(target, typeInfo) {
-    H.assertHelper(typeInfo == null || typeof typeInfo === "object" && typeInfo !== null && typeInfo.constructor === Array);
     if (target != null)
       target.$builtinTypeInfo = typeInfo;
     return target;
@@ -1075,42 +912,19 @@ var $$ = Object.create(null);
     return H.substitute(target["$as" + H.S(substitutionName)], H.getRuntimeTypeInfo(target));
   },
   getRuntimeTypeArgument: function(target, substitutionName, index) {
-    var $arguments, t1;
-    H.stringTypeCheck(substitutionName);
-    H.intTypeCheck(index);
-    $arguments = H.getRuntimeTypeArguments(target, substitutionName);
-    if ($arguments == null)
-      t1 = null;
-    else {
-      H.assertHelper(typeof $arguments === "object" && $arguments !== null && $arguments.constructor === Array);
-      t1 = $arguments[index];
-    }
-    return t1;
+    var $arguments = H.getRuntimeTypeArguments(target, substitutionName);
+    return $arguments == null ? null : $arguments[index];
   },
   getTypeArgumentByIndex: function(target, index) {
-    var rti, t1;
-    H.intTypeCheck(index);
-    rti = H.getRuntimeTypeInfo(target);
-    if (rti == null)
-      t1 = null;
-    else {
-      H.assertHelper(typeof rti === "object" && rti !== null && rti.constructor === Array);
-      t1 = rti[index];
-    }
-    return t1;
+    var rti = H.getRuntimeTypeInfo(target);
+    return rti == null ? null : rti[index];
   },
   runtimeTypeToString: function(type, onTypeVariable) {
-    var t1, t2;
-    t1 = H.buildFunctionType(H.buildInterfaceType(P.String), [H.buildInterfaceType(P.$int)]);
-    t2 = t1._assertCheck$1(onTypeVariable);
     if (type == null)
       return "dynamic";
-    else if (typeof type === "object" && type !== null && type.constructor === Array) {
-      t1._assertCheck$1(t2);
-      H.assertHelper(true);
-      H.assertHelper(true);
-      return type[0].builtin$cls + H.joinArguments(type, 1, t2);
-    } else if (typeof type == "function")
+    else if (typeof type === "object" && type !== null && type.constructor === Array)
+      return type[0].builtin$cls + H.joinArguments(type, 1, onTypeVariable);
+    else if (typeof type == "function")
       return type.builtin$cls;
     else if (typeof type === "number" && Math.floor(type) === type)
       return C.JSInt_methods.toString$0(type);
@@ -1118,30 +932,24 @@ var $$ = Object.create(null);
       return;
   },
   joinArguments: function(types, startIndex, onTypeVariable) {
-    var t1, t2, buffer, index, firstArgument, allDynamic, argument, str;
-    t1 = H.buildFunctionType(H.buildInterfaceType(P.String), [H.buildInterfaceType(P.$int)])._assertCheck$1(onTypeVariable);
+    var buffer, index, firstArgument, allDynamic, argument, str;
     if (types == null)
       return "";
-    t2 = typeof types === "object" && types !== null && types.constructor === Array;
-    H.assertHelper(t2);
     buffer = P.StringBuffer$("");
-    for (index = startIndex, firstArgument = true, allDynamic = true; H.assertHelper(t2), index < types.length; ++index) {
+    for (index = startIndex, firstArgument = true, allDynamic = true; index < types.length; ++index) {
       if (firstArgument)
         firstArgument = false;
       else
         buffer._contents += ", ";
-      H.assertHelper(t2);
       argument = types[index];
       if (argument != null)
         allDynamic = false;
-      str = H.runtimeTypeToString(argument, t1);
+      str = H.runtimeTypeToString(argument, onTypeVariable);
       buffer._contents += typeof str === "string" ? str : H.S(str);
     }
     return allDynamic ? "" : "<" + H.S(buffer) + ">";
   },
   substitute: function(substitution, $arguments) {
-    H.assertHelper(substitution == null || typeof substitution === "object" && substitution !== null && substitution.constructor === Array || typeof substitution == "function");
-    H.assertHelper($arguments == null || typeof $arguments === "object" && $arguments !== null && $arguments.constructor === Array);
     if (typeof substitution === "object" && substitution !== null && substitution.constructor === Array)
       $arguments = substitution;
     else if (typeof substitution == "function") {
@@ -1153,255 +961,7 @@ var $$ = Object.create(null);
     }
     return $arguments;
   },
-  checkSubtype: function(object, isField, checks, asField) {
-    var $arguments, interceptor;
-    H.stringTypeCheck(isField);
-    H.listTypeCheck(checks);
-    H.stringTypeCheck(asField);
-    if (object == null)
-      return false;
-    $arguments = H.getRuntimeTypeInfo(object);
-    interceptor = J.getInterceptor(object);
-    if (interceptor[isField] == null)
-      return false;
-    return H.areSubtypes(H.substitute(interceptor[asField], $arguments), checks);
-  },
-  computeTypeName: function(isField, $arguments) {
-    return (J.substring$2$s(isField, 3, isField.length) + H.joinArguments($arguments, 0, null)).replace(/[^<,> ]+/g, function(m) {
-      return init.mangledGlobalNames[m] || m;
-    });
-  },
-  assertSubtype: function(object, isField, checks, asField) {
-    H.stringTypeCheck(isField);
-    H.listTypeCheck(checks);
-    H.stringTypeCheck(asField);
-    if (object != null && !H.checkSubtype(object, isField, checks, asField))
-      throw H.wrapException(H.TypeErrorImplementation$(object, H.computeTypeName(isField, checks)));
-    return object;
-  },
-  areSubtypes: function(s, t) {
-    var t1, t2, t3, len, i;
-    if (s == null || t == null)
-      return true;
-    t1 = typeof s === "object" && s !== null && s.constructor === Array;
-    H.assertHelper(t1);
-    t2 = typeof t === "object" && t !== null && t.constructor === Array;
-    H.assertHelper(t2);
-    H.assertHelper(t1);
-    t3 = s.length;
-    H.assertHelper(t2);
-    H.assertHelper(t3 === t.length);
-    H.assertHelper(t1);
-    len = s.length;
-    for (i = 0; i < len; ++i) {
-      H.assertHelper(t1);
-      t3 = s[i];
-      H.assertHelper(t2);
-      if (!H.isSubtype(t3, t[i]))
-        return false;
-    }
-    return true;
-  },
-  checkSubtypeOfRuntimeType: function(o, t) {
-    var rti, type;
-    if (o == null)
-      return t == null || t.builtin$cls === "Object" || t.builtin$cls === "Null";
-    if (t == null)
-      return true;
-    rti = H.getRuntimeTypeInfo(o);
-    o = J.getInterceptor(o);
-    if (rti != null) {
-      type = rti.slice();
-      type.splice(0, 0, o);
-    } else
-      type = o;
-    return H.isSubtype(type, t);
-  },
-  assertSubtypeOfRuntimeType: function(object, type) {
-    if (object != null && !H.checkSubtypeOfRuntimeType(object, type))
-      throw H.wrapException(H.TypeErrorImplementation$(object, H.runtimeTypeToString(type, null)));
-    return object;
-  },
-  isSubtype: function(s, t) {
-    var targetSignatureFunction, t1, typeOfS, t2, typeOfT, $name, substitution;
-    if (s === t)
-      return true;
-    if (s == null || t == null)
-      return true;
-    if ("func" in t) {
-      if (!("func" in s)) {
-        if ("$is_" + H.S(t.func) in s)
-          return true;
-        targetSignatureFunction = s.$signature;
-        if (targetSignatureFunction == null)
-          return false;
-        H.assertHelper(typeof targetSignatureFunction == "function");
-        H.assertHelper(null == null || false);
-        s = targetSignatureFunction.apply(s, null);
-      }
-      return H.isFunctionSubtype(s, t);
-    }
-    if (t.builtin$cls === "Function" && "func" in s)
-      return true;
-    t1 = typeof s === "object" && s !== null && s.constructor === Array;
-    if (t1) {
-      H.assertHelper(true);
-      typeOfS = s[0];
-    } else
-      typeOfS = s;
-    t2 = typeof t === "object" && t !== null && t.constructor === Array;
-    if (t2) {
-      H.assertHelper(true);
-      typeOfT = t[0];
-    } else
-      typeOfT = t;
-    $name = H.runtimeTypeToString(typeOfT, null);
-    if (typeOfT !== typeOfS) {
-      if (!("$is" + H.S($name) in typeOfS))
-        return false;
-      substitution = typeOfS["$as" + H.S(H.runtimeTypeToString(typeOfT, null))];
-    } else
-      substitution = null;
-    if (!t1 && substitution == null || !t2)
-      return true;
-    t1 = t1 ? s.slice(1) : null;
-    t2 = t2 ? t.slice(1) : null;
-    return H.areSubtypes(H.substitute(substitution, t1), t2);
-  },
-  areAssignable: function(s, t, allowShorter) {
-    var t1, t2, sLength, tLength, i, t3, t4;
-    H.listTypeCheck(s);
-    H.listTypeCheck(t);
-    if (t == null && s == null)
-      return true;
-    if (t == null)
-      return allowShorter;
-    if (s == null)
-      return false;
-    t1 = typeof s === "object" && s !== null && s.constructor === Array;
-    H.assertHelper(t1);
-    t2 = typeof t === "object" && t !== null && t.constructor === Array;
-    H.assertHelper(t2);
-    H.assertHelper(t1);
-    sLength = s.length;
-    H.assertHelper(t2);
-    tLength = t.length;
-    if (allowShorter) {
-      if (sLength < tLength)
-        return false;
-    } else if (sLength !== tLength)
-      return false;
-    for (i = 0; i < tLength; ++i) {
-      H.assertHelper(t1);
-      t3 = s[i];
-      H.assertHelper(t2);
-      t4 = t[i];
-      if (!(H.isSubtype(t3, t4) || H.isSubtype(t4, t3)))
-        return false;
-    }
-    return true;
-  },
-  areAssignableMaps: function(s, t) {
-    var t1, names, i, $name, tType, sType;
-    if (t == null)
-      return true;
-    if (s == null)
-      return false;
-    H.assertHelper(typeof s == 'object');
-    H.assertHelper(typeof t == 'object');
-    t1 = Object.getOwnPropertyNames(t);
-    H.listTypeCheck(t1);
-    t1.fixed$length = init;
-    names = t1;
-    for (t1 = names.length, i = 0; i < t1; ++i) {
-      $name = names[i];
-      if (!Object.hasOwnProperty.call(s, $name))
-        return false;
-      tType = t[$name];
-      sType = s[$name];
-      if (!(H.isSubtype(tType, sType) || H.isSubtype(sType, tType)))
-        return false;
-    }
-    return true;
-  },
-  isFunctionSubtype: function(s, t) {
-    var sReturnType, tReturnType, sParameterTypes, tParameterTypes, sOptionalParameterTypes, tOptionalParameterTypes, sParametersLen, tParametersLen, sOptionalParametersLen, tOptionalParametersLen, t1, t2, pos, t3, t4, tPos, sPos;
-    H.assertHelper("func" in t);
-    if (!("func" in s))
-      return false;
-    if ("void" in s) {
-      if (!("void" in t) && "ret" in t)
-        return false;
-    } else if (!("void" in t)) {
-      sReturnType = s.ret;
-      tReturnType = t.ret;
-      if (!(H.isSubtype(sReturnType, tReturnType) || H.isSubtype(tReturnType, sReturnType)))
-        return false;
-    }
-    sParameterTypes = s.args;
-    tParameterTypes = t.args;
-    sOptionalParameterTypes = s.opt;
-    tOptionalParameterTypes = t.opt;
-    if (sParameterTypes != null) {
-      H.assertHelper(typeof sParameterTypes === "object" && sParameterTypes !== null && sParameterTypes.constructor === Array);
-      sParametersLen = sParameterTypes.length;
-    } else
-      sParametersLen = 0;
-    if (tParameterTypes != null) {
-      H.assertHelper(typeof tParameterTypes === "object" && tParameterTypes !== null && tParameterTypes.constructor === Array);
-      tParametersLen = tParameterTypes.length;
-    } else
-      tParametersLen = 0;
-    if (sOptionalParameterTypes != null) {
-      H.assertHelper(typeof sOptionalParameterTypes === "object" && sOptionalParameterTypes !== null && sOptionalParameterTypes.constructor === Array);
-      sOptionalParametersLen = sOptionalParameterTypes.length;
-    } else
-      sOptionalParametersLen = 0;
-    if (tOptionalParameterTypes != null) {
-      H.assertHelper(typeof tOptionalParameterTypes === "object" && tOptionalParameterTypes !== null && tOptionalParameterTypes.constructor === Array);
-      tOptionalParametersLen = tOptionalParameterTypes.length;
-    } else
-      tOptionalParametersLen = 0;
-    if (sParametersLen > tParametersLen)
-      return false;
-    if (sParametersLen + sOptionalParametersLen < tParametersLen + tOptionalParametersLen)
-      return false;
-    if (sParametersLen === tParametersLen) {
-      if (!H.areAssignable(sParameterTypes, tParameterTypes, false))
-        return false;
-      if (!H.areAssignable(sOptionalParameterTypes, tOptionalParameterTypes, true))
-        return false;
-    } else {
-      for (t1 = typeof sParameterTypes === "object" && sParameterTypes !== null && sParameterTypes.constructor === Array, t2 = typeof tParameterTypes === "object" && tParameterTypes !== null && tParameterTypes.constructor === Array, pos = 0; pos < sParametersLen; ++pos) {
-        H.assertHelper(t1);
-        t3 = sParameterTypes[pos];
-        H.assertHelper(t2);
-        t4 = tParameterTypes[pos];
-        if (!(H.isSubtype(t3, t4) || H.isSubtype(t4, t3)))
-          return false;
-      }
-      for (t1 = typeof sOptionalParameterTypes === "object" && sOptionalParameterTypes !== null && sOptionalParameterTypes.constructor === Array, tPos = pos, sPos = 0; tPos < tParametersLen; ++sPos, ++tPos) {
-        H.assertHelper(t1);
-        t3 = sOptionalParameterTypes[sPos];
-        H.assertHelper(t2);
-        t4 = tParameterTypes[tPos];
-        if (!(H.isSubtype(t3, t4) || H.isSubtype(t4, t3)))
-          return false;
-      }
-      for (t2 = typeof tOptionalParameterTypes === "object" && tOptionalParameterTypes !== null && tOptionalParameterTypes.constructor === Array, tPos = 0; tPos < tOptionalParametersLen; ++sPos, ++tPos) {
-        H.assertHelper(t1);
-        t3 = sOptionalParameterTypes[sPos];
-        H.assertHelper(t2);
-        t4 = tOptionalParameterTypes[tPos];
-        if (!(H.isSubtype(t3, t4) || H.isSubtype(t4, t3)))
-          return false;
-      }
-    }
-    return H.areAssignableMaps(s.named, t.named);
-  },
   invokeOn: function($function, receiver, $arguments) {
-    H.assertHelper(typeof $function == "function");
-    H.assertHelper($arguments == null || typeof $arguments === "object" && $arguments !== null && $arguments.constructor === Array);
     return $function.apply(receiver, $arguments);
   },
   toStringForNativeObject: function(obj) {
@@ -1412,12 +972,11 @@ var $$ = Object.create(null);
     return H.Primitives_objectHashCode(object);
   },
   defineProperty: function(obj, property, value) {
-    Object.defineProperty(obj, H.stringTypeCheck(property), {value: value, enumerable: false, writable: true, configurable: true});
+    Object.defineProperty(obj, property, {value: value, enumerable: false, writable: true, configurable: true});
   },
   lookupAndCacheInterceptor: function(obj) {
     var tag, record, interceptor, interceptorClass, mark, t1;
-    H.assertHelper(!(obj instanceof P.Object));
-    tag = H.stringTypeCheck($.getTagFunction.call$1(obj));
+    tag = $.getTagFunction.call$1(obj);
     record = $.dispatchRecordsForInstanceTags[tag];
     if (record != null) {
       Object.defineProperty(obj, init.dispatchPropertyName, {value: record, enumerable: false, writable: true, configurable: true});
@@ -1428,7 +987,7 @@ var $$ = Object.create(null);
       return interceptor;
     interceptorClass = init.interceptorsByTag[tag];
     if (interceptorClass == null) {
-      tag = H.stringTypeCheck($.alternateTagFunction.call$2(obj, tag));
+      tag = $.alternateTagFunction.call$2(obj, tag);
       if (tag != null) {
         record = $.dispatchRecordsForInstanceTags[tag];
         if (record != null) {
@@ -1554,7 +1113,6 @@ var $$ = Object.create(null);
   },
   ReflectionInfo: {
     "^": "Object;jsFunction,data,isAccessor,requiredParameterCount,optionalParameterCount,areOptionalParametersNamed,functionType,cachedSortedIndices",
-    $isReflectionInfo: true,
     static: {"^": "ReflectionInfo_REQUIRED_PARAMETERS_INFO,ReflectionInfo_OPTIONAL_PARAMETERS_INFO,ReflectionInfo_FUNCTION_TYPE_INDEX,ReflectionInfo_FIRST_DEFAULT_ARGUMENT", ReflectionInfo_ReflectionInfo: function(jsFunction) {
         var data, requiredParametersInfo, optionalParametersInfo;
         data = jsFunction.$reflectionInfo;
@@ -1568,46 +1126,40 @@ var $$ = Object.create(null);
       }}
   },
   invokeClosure_closure: {
-    "^": "Closure:6;closure_0",
+    "^": "Closure;closure_0",
     call$0: function() {
       return this.closure_0.call$0();
-    },
-    $isFunction: true
+    }
   },
   invokeClosure_closure0: {
-    "^": "Closure:6;closure_1,arg1_2",
+    "^": "Closure;closure_1,arg1_2",
     call$0: function() {
       return this.closure_1.call$1(this.arg1_2);
-    },
-    $isFunction: true
+    }
   },
   invokeClosure_closure1: {
-    "^": "Closure:6;closure_3,arg1_4,arg2_5",
+    "^": "Closure;closure_3,arg1_4,arg2_5",
     call$0: function() {
       return this.closure_3.call$2(this.arg1_4, this.arg2_5);
-    },
-    $isFunction: true
+    }
   },
   invokeClosure_closure2: {
-    "^": "Closure:6;closure_6,arg1_7,arg2_8,arg3_9",
+    "^": "Closure;closure_6,arg1_7,arg2_8,arg3_9",
     call$0: function() {
       return this.closure_6.call$3(this.arg1_7, this.arg2_8, this.arg3_9);
-    },
-    $isFunction: true
+    }
   },
   invokeClosure_closure3: {
-    "^": "Closure:6;closure_10,arg1_11,arg2_12,arg3_13,arg4_14",
+    "^": "Closure;closure_10,arg1_11,arg2_12,arg3_13,arg4_14",
     call$0: function() {
       return this.closure_10.call$4(this.arg1_11, this.arg2_12, this.arg3_13, this.arg4_14);
-    },
-    $isFunction: true
+    }
   },
   Closure: {
     "^": "Object;",
     toString$0: function(_) {
       return "Closure";
     },
-    $isFunction: true,
     get$$call: function() {
       return this;
     }
@@ -1651,7 +1203,6 @@ var $$ = Object.create(null);
         var template, t1, names, i, $name;
         template = new H.BoundClosure("self", "target", "receiver", "name");
         t1 = Object.getOwnPropertyNames(template);
-        H.listTypeCheck(t1);
         t1.fixed$length = init;
         names = t1;
         for (t1 = names.length, i = 0; i < t1; ++i) {
@@ -1661,285 +1212,40 @@ var $$ = Object.create(null);
         }
       }}
   },
-  TypeErrorImplementation: {
-    "^": "Error;message",
-    toString$0: function(_) {
-      return this.message;
-    },
-    static: {TypeErrorImplementation$: function(value, type) {
-        return new H.TypeErrorImplementation("type '" + H.Primitives_objectTypeName(value) + "' is not a subtype of type '" + H.S(type) + "'");
-      }}
-  },
-  CastErrorImplementation: {
-    "^": "Error;message",
-    toString$0: function(_) {
-      return this.message;
-    },
-    static: {CastErrorImplementation$: function(actualType, expectedType) {
-        return new H.CastErrorImplementation("CastError: Casting value of type " + H.S(actualType) + " to incompatible type " + H.S(expectedType));
-      }}
-  },
   RuntimeError: {
     "^": "Error;message",
     toString$0: function(_) {
-      return "RuntimeError: " + H.S(this.message);
+      return "RuntimeError: " + this.message;
     },
     static: {RuntimeError$: function(message) {
         return new H.RuntimeError(message);
       }}
   },
-  RuntimeType: {
-    "^": "Object;",
-    $isRuntimeType: true
-  },
-  RuntimeFunctionType: {
-    "^": "RuntimeType;returnType,parameterTypes,optionalParameterTypes,namedParameters",
-    _isTest$1: function(expression) {
-      var functionTypeObject = this._extractFunctionTypeObjectFrom$1(expression);
-      return functionTypeObject == null ? false : H.isFunctionSubtype(functionTypeObject, this.toRti$0());
-    },
-    _assertCheck$1: function(expression) {
-      var t1;
-      if ($.RuntimeFunctionType_inAssert)
-        return;
-      $.RuntimeFunctionType_inAssert = true;
-      try {
-        t1 = this._check$2(expression, false);
-        return t1;
-      } finally {
-        $.RuntimeFunctionType_inAssert = false;
-      }
-    },
-    _check$2: function(expression, isCast) {
-      var $self, functionTypeObject;
-      if (expression == null)
-        return;
-      if (this._isTest$1(expression))
-        return expression;
-      $self = new H.FunctionTypeInfoDecoderRing(this.toRti$0(), null).toString$0(0);
-      if (isCast) {
-        functionTypeObject = this._extractFunctionTypeObjectFrom$1(expression);
-        throw H.wrapException(H.CastErrorImplementation$(functionTypeObject != null ? new H.FunctionTypeInfoDecoderRing(functionTypeObject, null).toString$0(0) : H.Primitives_objectTypeName(expression), $self));
-      } else
-        throw H.wrapException(H.TypeErrorImplementation$(expression, $self));
-    },
-    _extractFunctionTypeObjectFrom$1: function(o) {
-      var interceptor = J.getInterceptor(o);
-      return "$signature" in interceptor ? interceptor.$signature() : null;
-    },
-    toRti$0: function() {
-      var result, t1, t2, namedRti, keys, i, $name;
-      result = {func: "dynafunc"};
-      t1 = this.returnType;
-      t2 = J.getInterceptor(t1);
-      if (!!t2.$isVoidRuntimeType)
-        result.void = true;
-      else if (!t2.$isDynamicRuntimeType)
-        result.ret = t1.toRti$0();
-      t1 = this.parameterTypes;
-      if (t1 != null && t1.length !== 0)
-        result.args = H.RuntimeFunctionType_listToRti(t1);
-      t1 = this.optionalParameterTypes;
-      if (t1 != null && t1.length !== 0)
-        result.opt = H.RuntimeFunctionType_listToRti(t1);
-      t1 = this.namedParameters;
-      if (t1 != null) {
-        namedRti = Object.create(null);
-        keys = H.extractKeys(t1);
-        for (t2 = keys.length, i = 0; i < t2; ++i) {
-          $name = keys[i];
-          namedRti[$name] = t1[$name].toRti$0();
-        }
-        result.named = namedRti;
-      }
-      return result;
-    },
-    toString$0: function(_) {
-      var t1, t2, result, needsComma, i, type, keys, $name;
-      t1 = this.parameterTypes;
-      if (t1 != null)
-        for (t2 = t1.length, result = "(", needsComma = false, i = 0; i < t2; ++i, needsComma = true) {
-          type = H.interceptedTypeCheck(t1[i], "$isRuntimeType");
-          if (needsComma)
-            result += ", ";
-          result = C.JSString_methods.$add(result, J.toString$0(type));
-        }
-      else {
-        result = "(";
-        needsComma = false;
-      }
-      t1 = this.optionalParameterTypes;
-      if (t1 != null && t1.length !== 0) {
-        result = (needsComma ? result + ", " : result) + "[";
-        for (t2 = t1.length, needsComma = false, i = 0; i < t2; ++i, needsComma = true) {
-          type = H.interceptedTypeCheck(t1[i], "$isRuntimeType");
-          if (needsComma)
-            result += ", ";
-          result = C.JSString_methods.$add(result, J.toString$0(type));
-        }
-        result += "]";
-      } else {
-        t1 = this.namedParameters;
-        if (t1 != null) {
-          result = (needsComma ? result + ", " : result) + "{";
-          keys = H.extractKeys(t1);
-          for (t2 = keys.length, needsComma = false, i = 0; i < t2; ++i, needsComma = true) {
-            $name = keys[i];
-            if (needsComma)
-              result += ", ";
-            result += H.S(t1[$name].toRti$0()) + " " + $name;
-          }
-          result += "}";
-        }
-      }
-      return result + (") -> " + J.toString$0(this.returnType));
-    },
-    $isRuntimeFunctionType: true,
-    static: {"^": "RuntimeFunctionType_inAssert", RuntimeFunctionType_listToRti: function(list) {
-        var result, t1, i;
-        list = list;
-        result = [];
-        for (t1 = list.length, i = 0; i < t1; ++i)
-          result.push(list[i].toRti$0());
-        return result;
-      }}
-  },
-  DynamicRuntimeType: {
-    "^": "RuntimeType;",
-    toString$0: function(_) {
-      return "dynamic";
-    },
-    toRti$0: function() {
-      return;
-    },
-    $isDynamicRuntimeType: true
-  },
-  VoidRuntimeType: {
-    "^": "RuntimeType;",
-    toString$0: function(_) {
-      return "void";
-    },
-    toRti$0: function() {
-      return H.throwExpression("internal error");
-    },
-    $isVoidRuntimeType: true
-  },
-  RuntimeTypePlain: {
-    "^": "RuntimeType;name",
-    toRti$0: function() {
-      var t1, rti;
-      t1 = this.name;
-      rti = init.allClasses[t1];
-      if (rti == null)
-        throw H.wrapException("no type for '" + H.S(t1) + "'");
-      return rti;
-    },
-    toString$0: function(_) {
-      return this.name;
-    }
-  },
-  RuntimeTypeGeneric: {
-    "^": "RuntimeType;name,arguments,rti",
-    toRti$0: function() {
-      var t1, result, t2, t3;
-      t1 = this.rti;
-      if (t1 != null)
-        return t1;
-      t1 = this.name;
-      result = [init.allClasses[t1]];
-      if (0 >= result.length)
-        return H.ioore(result, 0);
-      if (result[0] == null)
-        throw H.wrapException("no type for '" + H.S(t1) + "<...>'");
-      for (t1 = this.arguments, t1.toString, t2 = H.getTypeArgumentByIndex(t1, 0), H.listSuperNativeTypeCheck(t1, "$isIterable"), t3 = t1.length, t1 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(t1, "$isIterable"), t3, 0, H.assertSubtypeOfRuntimeType(null, t2)), [t2]), "$isIterator", [H.getTypeArgumentByIndex(t1, 0)], "$asIterator"); t1.moveNext$0();)
-        result.push(H.interceptedTypeCheck(H.assertSubtypeOfRuntimeType(t1._current, H.getTypeArgumentByIndex(t1, 0)), "$isRuntimeType").toRti$0());
-      this.rti = result;
-      return result;
-    },
-    toString$0: function(_) {
-      return H.S(this.name) + "<" + J.join$1$ax(this.arguments, ", ") + ">";
-    }
-  },
-  FunctionTypeInfoDecoderRing: {
-    "^": "Object;_typeData,_cachedToString",
-    _convert$1: function(type) {
-      var result = H.runtimeTypeToString(type, null);
-      if (result != null)
-        return result;
-      if ("func" in type)
-        return new H.FunctionTypeInfoDecoderRing(type, null).toString$0(0);
-      else
-        throw H.wrapException("bad type");
-    },
-    toString$0: function(_) {
-      var t1, t2, t3, t4, s, sep, argument, $name;
-      t1 = this._cachedToString;
-      if (t1 != null)
-        return t1;
-      t1 = this._typeData;
-      if ("args" in t1)
-        for (t2 = t1.args, t3 = H.getTypeArgumentByIndex(t2, 0), H.listSuperNativeTypeCheck(t2, "$isIterable"), t4 = t2.length, t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(t2, "$isIterable"), t4, 0, H.assertSubtypeOfRuntimeType(null, t3)), [t3]), "$isIterator", [H.getTypeArgumentByIndex(t2, 0)], "$asIterator"), s = "(", sep = ""; t2.moveNext$0(); sep = ", ") {
-          argument = H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0));
-          s = C.JSString_methods.$add(s + sep, this._convert$1(argument));
-        }
-      else {
-        s = "(";
-        sep = "";
-      }
-      if ("opt" in t1) {
-        s += sep + "[";
-        for (t2 = t1.opt, t3 = H.getTypeArgumentByIndex(t2, 0), H.listSuperNativeTypeCheck(t2, "$isIterable"), t4 = t2.length, t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(t2, "$isIterable"), t4, 0, H.assertSubtypeOfRuntimeType(null, t3)), [t3]), "$isIterator", [H.getTypeArgumentByIndex(t2, 0)], "$asIterator"), sep = ""; t2.moveNext$0(); sep = ", ") {
-          argument = H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0));
-          s = C.JSString_methods.$add(s + sep, this._convert$1(argument));
-        }
-        s += "]";
-      }
-      if ("named" in t1) {
-        s += sep + "{";
-        for (t2 = H.extractKeys(t1.named), t3 = H.getTypeArgumentByIndex(t2, 0), H.listSuperNativeTypeCheck(t2, "$isIterable"), t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(t2, "$isIterable"), t2.length, 0, H.assertSubtypeOfRuntimeType(null, t3)), [t3]), "$isIterator", [H.getTypeArgumentByIndex(t2, 0)], "$asIterator"), sep = ""; t2.moveNext$0(); sep = ", ") {
-          $name = H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0));
-          s = C.JSString_methods.$add(s + sep + (H.S($name) + ": "), this._convert$1(t1.named[$name]));
-        }
-        s += "}";
-      }
-      s += ") -> ";
-      if (!!t1.void)
-        s += "void";
-      else
-        s = "ret" in t1 ? C.JSString_methods.$add(s, this._convert$1(t1.ret)) : s + "dynamic";
-      this._cachedToString = s;
-      return s;
-    }
-  },
   initHooks_closure: {
-    "^": "Closure:7;getTag_0",
+    "^": "Closure;getTag_0",
     call$1: function(o) {
       return this.getTag_0(o);
-    },
-    $isFunction: true
+    }
   },
   initHooks_closure0: {
-    "^": "Closure:8;getUnknownTag_1",
+    "^": "Closure;getUnknownTag_1",
     call$2: function(o, tag) {
       return this.getUnknownTag_1(o, tag);
-    },
-    $isFunction: true
+    }
   },
   initHooks_closure1: {
-    "^": "Closure:9;prototypeForTag_2",
+    "^": "Closure;prototypeForTag_2",
     call$1: function(tag) {
-      return this.prototypeForTag_2(H.stringTypeCheck(tag));
-    },
-    $isFunction: true
+      return this.prototypeForTag_2(tag);
+    }
   }
 }],
 ["dart._internal", "dart:_internal", , H, {
   "^": "",
   IterableMixinWorkaround_any: function(iterable, f) {
-    var t1, t2, t3;
-    t1 = H.buildFunctionType(H.buildInterfaceType(P.bool), [H.getDynamicRuntimeType()])._assertCheck$1(f);
-    for (t2 = H.getTypeArgumentByIndex(iterable, 0), H.listSuperNativeTypeCheck(iterable, "$isIterable"), t3 = iterable.length, t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(iterable, "$isIterable"), t3, 0, H.assertSubtypeOfRuntimeType(null, t2)), [t2]), "$isIterator", [H.getTypeArgumentByIndex(iterable, 0)], "$asIterator"); t2.moveNext$0();)
-      if (H.boolConversionCheck(t1.call$1(H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0)))))
+    var t1;
+    for (t1 = new H.ListIterator(iterable, iterable.length, 0, null); t1.moveNext$0();)
+      if (f.call$1(t1._current) === true)
         return true;
     return false;
   },
@@ -1952,37 +1258,22 @@ var $$ = Object.create(null);
   ListIterable: {
     "^": "IterableBase;",
     get$iterator: function(_) {
-      var t1, t2;
-      t1 = H.getRuntimeTypeArgument(this, "ListIterable", 0);
-      H.listSuperNativeTypeCheck(this, "$isIterable");
-      t2 = this.get$length(this);
-      return H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(this, "$isIterable"), t2, 0, H.assertSubtypeOfRuntimeType(null, t1)), [t1]), "$isIterator", [H.getRuntimeTypeArgument(this, "ListIterable", 0)], "$asIterator");
+      return new H.ListIterator(this, this.get$length(this), 0, null);
     },
     forEach$1: function(_, action) {
-      var t1, $length, i;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [this.$tv_E()])._assertCheck$1(action);
+      var $length, i;
       $length = this.get$length(this);
       for (i = 0; i < $length; ++i) {
-        t1.call$1(this.elementAt$1(0, i));
+        action.call$1(this.elementAt$1(0, i));
         if ($length !== this.get$length(this))
           throw H.wrapException(P.ConcurrentModificationError$(this));
       }
-    },
-    $isEfficientLength: true,
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    },
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
     }
   },
   ListIterator: {
     "^": "Object;_iterable,_length,_index,_current",
-    set$_current: function(_current) {
-      this._current = H.assertSubtypeOfRuntimeType(_current, H.getTypeArgumentByIndex(this, 0));
-    },
     get$current: function() {
-      return H.assertSubtypeOfRuntimeType(this._current, H.getTypeArgumentByIndex(this, 0));
+      return this._current;
     },
     moveNext$0: function() {
       var t1, t2, $length, t3;
@@ -1993,14 +1284,13 @@ var $$ = Object.create(null);
         throw H.wrapException(P.ConcurrentModificationError$(t1));
       t3 = this._index;
       if (t3 >= $length) {
-        this.set$_current(null);
+        this._current = null;
         return false;
       }
-      this.set$_current(t2.elementAt$1(t1, t3));
+      this._current = t2.elementAt$1(t1, t3);
       ++this._index;
       return true;
-    },
-    $isIterator: true
+    }
   },
   MappedListIterable: {
     "^": "ListIterable;_source,_f",
@@ -2011,54 +1301,21 @@ var $$ = Object.create(null);
       return J.get$length$asx(this._source);
     },
     elementAt$1: function(_, index) {
-      return H.assertSubtypeOfRuntimeType(this._f$1(J.elementAt$1$ax(this._source, index)), H.getTypeArgumentByIndex(this, 1));
+      return this._f$1(J.elementAt$1$ax(this._source, index));
     },
     $asListIterable: function($S, $T) {
       return [$T];
     },
     $asIterableBase: function($S, $T) {
       return [$T];
-    },
-    $asIterableBase: function($S, $T) {
-      return [$T];
-    },
-    $asIterable: function($S, $T) {
-      return [$T];
-    },
-    $isEfficientLength: true,
-    $tv_S: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    },
-    $tv_T: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[1]);
-    },
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(function($S, $T) {
-        return [$T];
-      }.apply(null, this.$builtinTypeInfo)[0]);
-    },
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(function($S, $T) {
-        return [$T];
-      }.apply(null, this.$builtinTypeInfo)[0]);
     }
   },
   WhereIterable: {
     "^": "IterableBase;_iterable,_f",
     get$iterator: function(_) {
-      var t1, t2, t3, t4;
-      t1 = J.get$iterator$ax(this._iterable);
-      t2 = this._f;
-      t3 = H.getTypeArgumentByIndex(this, 0);
-      H.assertSubtype(t1, "$isIterator", [t3], "$asIterator");
-      t4 = H.buildInterfaceType(P.bool);
-      H.buildFunctionType(t4, [H.convertRtiToRuntimeType(t3)])._assertCheck$1(t2);
-      t2 = new H.WhereIterator(H.assertSubtype(t1, "$isIterator", [t3], "$asIterator"), H.buildFunctionType(t4, [H.getDynamicRuntimeType()])._assertCheck$1(t2));
-      t2.$builtinTypeInfo = this.$builtinTypeInfo;
-      return H.assertSubtype(t2, "$isIterator", [H.getTypeArgumentByIndex(this, 0)], "$asIterator");
-    },
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
+      var t1 = new H.WhereIterator(J.get$iterator$ax(this._iterable), this._f);
+      t1.$builtinTypeInfo = this.$builtinTypeInfo;
+      return t1;
     }
   },
   WhereIterator: {
@@ -2068,41 +1325,26 @@ var $$ = Object.create(null);
     },
     moveNext$0: function() {
       for (var t1 = this._iterator; t1.moveNext$0();)
-        if (H.boolConversionCheck(this._f$1(t1.get$current())))
+        if (this._f$1(t1.get$current()) === true)
           return true;
       return false;
     },
     get$current: function() {
-      return H.assertSubtypeOfRuntimeType(this._iterator.get$current(), H.getTypeArgumentByIndex(this, 0));
+      return this._iterator.get$current();
     }
-  }
-}],
-["dart._js_names", "dart:_js_names", , H, {
-  "^": "",
-  extractKeys: function(victim) {
-    var t1 = H.setRuntimeTypeInfo(H.assertSubtype(function(victim, hasOwnProperty) {
-      var result = [];
-      for (var key in victim) {
-        if (hasOwnProperty.call(victim, key))
-          result.push(key);
-      }
-      return result;
-    }(victim, Object.prototype.hasOwnProperty), "$isJSArray", [null], "$asJSArray"), [null]);
-    t1.fixed$length = init;
-    return H.assertSubtype(t1, "$isJSArray", [null], "$asJSArray");
   }
 }],
 ["dart.collection", "dart:collection", , P, {
   "^": "",
   LinkedHashMap_LinkedHashMap$_empty: function($K, $V) {
-    return H.assertSubtype(H.setRuntimeTypeInfo(new P._LinkedHashMap(0, null, null, null, null, null, 0), [$K, $V]), "$isLinkedHashMap", [$K, $V], "$asLinkedHashMap");
+    return H.setRuntimeTypeInfo(new P._LinkedHashMap(0, null, null, null, null, null, 0), [$K, $V]);
   },
   _defaultEquals: [function(a, b) {
     return J.$eq(a, b);
-  }, "call$2", "_defaultEquals$closure", 4, 0, 0],
+  }, "call$2", "_defaultEquals$closure", 4, 0, 1],
   _defaultHashCode: [function(a) {
     return J.get$hashCode$(a);
-  }, "call$1", "_defaultHashCode$closure", 2, 0, 1],
+  }, "call$1", "_defaultHashCode$closure", 2, 0, 2],
   IterableBase_iterableToShortString: function(iterable, leftDelimiter, rightDelimiter) {
     var parts, t1;
     if (P.IterableBase__isToStringVisiting(iterable)) {
@@ -2112,11 +1354,10 @@ var $$ = Object.create(null);
     }
     parts = [];
     t1 = $.get$IterableBase__toStringVisiting();
-    C.JSArray_methods.add$1(t1, iterable);
+    t1.push(iterable);
     try {
       P.IterableBase__iterablePartsToStrings(iterable, parts);
     } finally {
-      H.assertHelper(C.JSArray_methods.get$last(t1) === iterable);
       if (0 >= t1.length)
         return H.ioore(t1, 0);
       t1.pop();
@@ -2125,7 +1366,7 @@ var $$ = Object.create(null);
     t1.writeAll$2(parts, ", ");
     t1.write$1(rightDelimiter);
     t1 = t1._contents;
-    return H.stringTypeCheck(t1.charCodeAt(0) == 0 ? t1 : t1);
+    return t1.charCodeAt(0) == 0 ? t1 : t1;
   },
   IterableBase_iterableToFullString: function(iterable, leftDelimiter, rightDelimiter) {
     var buffer, t1;
@@ -2133,18 +1374,17 @@ var $$ = Object.create(null);
       return leftDelimiter + "..." + rightDelimiter;
     buffer = P.StringBuffer$(leftDelimiter);
     t1 = $.get$IterableBase__toStringVisiting();
-    C.JSArray_methods.add$1(t1, iterable);
+    t1.push(iterable);
     try {
       buffer.writeAll$2(iterable, ", ");
     } finally {
-      H.assertHelper(C.JSArray_methods.get$last(t1) === iterable);
       if (0 >= t1.length)
         return H.ioore(t1, 0);
       t1.pop();
     }
     buffer.write$1(rightDelimiter);
     t1 = buffer.get$_contents();
-    return H.stringTypeCheck(t1.charCodeAt(0) == 0 ? t1 : t1);
+    return t1.charCodeAt(0) == 0 ? t1 : t1;
   },
   IterableBase__isToStringVisiting: function(o) {
     var i, t1;
@@ -2164,7 +1404,7 @@ var $$ = Object.create(null);
       if (!it.moveNext$0())
         return;
       next = H.S(it.get$current());
-      C.JSArray_methods.add$1(parts, next);
+      parts.push(next);
       $length += next.length + 2;
       ++count;
     }
@@ -2182,7 +1422,7 @@ var $$ = Object.create(null);
       ++count;
       if (!it.moveNext$0()) {
         if (count <= 4) {
-          C.JSArray_methods.add$1(parts, H.S(penultimate));
+          parts.push(H.S(penultimate));
           return;
         }
         ultimateString = H.S(penultimate);
@@ -2193,7 +1433,6 @@ var $$ = Object.create(null);
       } else {
         ultimate = it.get$current();
         ++count;
-        H.assertHelper(count < 100);
         for (; it.moveNext$0(); penultimate = ultimate, ultimate = ultimate0) {
           ultimate0 = it.get$current();
           ++count;
@@ -2206,7 +1445,7 @@ var $$ = Object.create(null);
               $length -= parts.pop().length + 2;
               --count;
             }
-            C.JSArray_methods.add$1(parts, "...");
+            parts.push("...");
             return;
           }
         }
@@ -2232,18 +1471,12 @@ var $$ = Object.create(null);
       }
     }
     if (elision != null)
-      C.JSArray_methods.add$1(parts, elision);
-    C.JSArray_methods.add$1(parts, penultimateString);
-    C.JSArray_methods.add$1(parts, ultimateString);
+      parts.push(elision);
+    parts.push(penultimateString);
+    parts.push(ultimateString);
   },
   LinkedHashSet_LinkedHashSet: function(equals, hashCode, isValidKey, $E) {
-    var t1, t2;
-    t1 = H.buildInterfaceType(P.bool);
-    t2 = H.convertRtiToRuntimeType($E);
-    H.buildFunctionType(t1, [t2, t2])._assertCheck$1(equals);
-    H.buildFunctionType(H.buildInterfaceType(P.$int), [t2])._assertCheck$1(hashCode);
-    H.buildFunctionType(t1, [H.getDynamicRuntimeType()])._assertCheck$1(isValidKey);
-    return H.assertSubtype(H.setRuntimeTypeInfo(new P._LinkedHashSet(0, null, null, null, null, null, 0), [$E]), "$isLinkedHashSet", [$E], "$asLinkedHashSet");
+    return H.setRuntimeTypeInfo(new P._LinkedHashSet(0, null, null, null, null, null, 0), [$E]);
   },
   Maps_mapToString: function(m) {
     var t1, result;
@@ -2252,20 +1485,19 @@ var $$ = Object.create(null);
       return "{...}";
     result = P.StringBuffer$("");
     try {
-      C.JSArray_methods.add$1($.get$IterableBase__toStringVisiting(), m);
+      $.get$IterableBase__toStringVisiting().push(m);
       result.write$1("{");
       t1.first_0 = true;
       J.forEach$1$ax(m, new P.Maps_mapToString_closure(t1, result));
       result.write$1("}");
     } finally {
       t1 = $.get$IterableBase__toStringVisiting();
-      H.assertHelper(C.JSArray_methods.get$last(t1) === m);
       if (0 >= t1.length)
         return H.ioore(t1, 0);
       t1.pop();
     }
     t1 = result.get$_contents();
-    return H.stringTypeCheck(t1.charCodeAt(0) == 0 ? t1 : t1);
+    return t1.charCodeAt(0) == 0 ? t1 : t1;
   },
   _LinkedHashMap: {
     "^": "Object;_collection$_length,_strings,_nums,_rest,_first,_last,_modifications",
@@ -2276,32 +1508,29 @@ var $$ = Object.create(null);
       return this._collection$_length === 0;
     },
     $index: function(_, key) {
-      var strings, cell, t1;
+      var strings, cell;
       if (key !== "__proto__") {
         strings = this._strings;
         if (strings == null)
-          return H.assertSubtypeOfRuntimeType(null, H.getTypeArgumentByIndex(this, 1));
-        cell = H.interceptedTypeCheck(strings[key], "$isLinkedHashMapCell");
-        t1 = cell == null ? null : cell._value;
-        return H.assertSubtypeOfRuntimeType(t1, H.getTypeArgumentByIndex(this, 1));
+          return;
+        cell = strings[key];
+        return cell == null ? null : cell.get$_value();
       } else
-        return H.assertSubtypeOfRuntimeType(this._get$1(key), H.getTypeArgumentByIndex(this, 1));
+        return this._get$1(key);
     },
     _get$1: function(key) {
       var rest, bucket, index;
       rest = this._rest;
       if (rest == null)
-        return H.assertSubtypeOfRuntimeType(null, H.getTypeArgumentByIndex(this, 1));
-      bucket = H.listTypeCheck(rest[C.JSString_methods.get$hashCode(key) & 0x3ffffff]);
+        return;
+      bucket = rest[C.JSString_methods.get$hashCode(key) & 0x3ffffff];
       index = this._findBucketIndex$2(bucket, key);
       if (index < 0)
-        return H.assertSubtypeOfRuntimeType(null, H.getTypeArgumentByIndex(this, 1));
-      return H.assertSubtypeOfRuntimeType(H.interceptedTypeCheck(bucket[index], "$isLinkedHashMapCell")._value, H.getTypeArgumentByIndex(this, 1));
+        return;
+      return bucket[index].get$_value();
     },
     $indexSet: function(_, key, value) {
-      var strings, nums, rest, hash, bucket, t1, index;
-      H.assertSubtypeOfRuntimeType(key, H.getTypeArgumentByIndex(this, 0));
-      H.assertSubtypeOfRuntimeType(value, H.getTypeArgumentByIndex(this, 1));
+      var strings, nums, rest, hash, bucket, index;
       if (typeof key === "string" && key !== "__proto__") {
         strings = this._strings;
         if (strings == null) {
@@ -2317,8 +1546,6 @@ var $$ = Object.create(null);
         }
         this._addHashTableEntry$3(nums, key, value);
       } else {
-        H.assertSubtypeOfRuntimeType(key, H.getTypeArgumentByIndex(this, 0));
-        H.assertSubtypeOfRuntimeType(value, H.getTypeArgumentByIndex(this, 1));
         rest = this._rest;
         if (rest == null) {
           rest = P._LinkedHashMap__newHashTable();
@@ -2326,53 +1553,45 @@ var $$ = Object.create(null);
         }
         hash = J.get$hashCode$(key) & 0x3ffffff;
         bucket = rest[hash];
-        if (bucket == null) {
-          t1 = [this._newLinkedCell$2(key, value)];
-          H.assertHelper(t1 != null);
-          rest[hash] = t1;
-        } else {
+        if (bucket == null)
+          rest[hash] = [this._newLinkedCell$2(key, value)];
+        else {
           index = this._findBucketIndex$2(bucket, key);
           if (index >= 0)
-            H.interceptedTypeCheck(bucket[index], "$isLinkedHashMapCell")._value = value;
+            bucket[index].set$_value(value);
           else
             bucket.push(this._newLinkedCell$2(key, value));
         }
       }
     },
     forEach$1: function(_, action) {
-      var t1, cell, modifications;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [this.$tv_K(), this.$tv_V()])._assertCheck$1(action);
+      var cell, modifications;
       cell = this._first;
       modifications = this._modifications;
       for (; cell != null;) {
-        t1.call$2(cell._key, cell._value);
+        action.call$2(cell.get$_key(), cell._value);
         if (modifications !== this._modifications)
           throw H.wrapException(P.ConcurrentModificationError$(this));
         cell = cell._next;
       }
     },
     _addHashTableEntry$3: function(table, key, value) {
-      var cell, t1;
-      H.assertSubtypeOfRuntimeType(key, H.getTypeArgumentByIndex(this, 0));
-      H.assertSubtypeOfRuntimeType(value, H.getTypeArgumentByIndex(this, 1));
-      cell = H.interceptedTypeCheck(table[key], "$isLinkedHashMapCell");
-      if (cell == null) {
-        t1 = this._newLinkedCell$2(key, value);
-        H.assertHelper(true);
-        table[key] = t1;
-      } else
-        cell._value = value;
+      var cell = table[key];
+      if (cell == null)
+        table[key] = this._newLinkedCell$2(key, value);
+      else
+        cell.set$_value(value);
     },
     _newLinkedCell$2: function(key, value) {
       var cell, last;
-      cell = new P.LinkedHashMapCell(H.assertSubtypeOfRuntimeType(key, H.getTypeArgumentByIndex(this, 0)), H.assertSubtypeOfRuntimeType(value, H.getTypeArgumentByIndex(this, 1)), null, null);
+      cell = new P.LinkedHashMapCell(key, value, null, null);
       if (this._first == null) {
         this._last = cell;
         this._first = cell;
       } else {
         last = this._last;
         cell._previous = last;
-        last._next = cell;
+        last.set$_next(cell);
         this._last = cell;
       }
       ++this._collection$_length;
@@ -2385,39 +1604,29 @@ var $$ = Object.create(null);
         return -1;
       $length = bucket.length;
       for (i = 0; i < $length; ++i)
-        if (J.$eq(H.interceptedTypeCheck(bucket[i], "$isLinkedHashMapCell")._key, key))
+        if (J.$eq(bucket[i].get$_key(), key))
           return i;
       return -1;
     },
     toString$0: function(_) {
       return P.Maps_mapToString(this);
     },
-    $isLinkedHashMap: true,
-    $isMap: true,
-    $tv_K: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    },
-    $tv_V: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[1]);
-    },
     static: {_LinkedHashMap__newHashTable: function() {
         var table = Object.create(null);
-        H.assertHelper(table != null);
         table["<non-identifier-key>"] = table;
         delete table["<non-identifier-key>"];
         return table;
       }}
   },
   LinkedHashMapCell: {
-    "^": "Object;_key,_value,_next,_previous",
-    $isLinkedHashMapCell: true
+    "^": "Object;_key<,_value@,_next@,_previous"
   },
   _LinkedHashSet: {
     "^": "_HashSetBase;_collection$_length,_strings,_nums,_rest,_first,_last,_modifications",
     get$iterator: function(_) {
-      var t1 = H.setRuntimeTypeInfo(new P.LinkedHashSetIterator(this, this._modifications, null, H.assertSubtypeOfRuntimeType(null, null)), [null]);
-      t1._cell = t1._set._first;
-      return H.assertSubtype(t1, "$isIterator", [H.getTypeArgumentByIndex(this, 0)], "$asIterator");
+      var t1 = new P.LinkedHashSetIterator(this, this._modifications, null, null);
+      t1._cell = this._first;
+      return t1;
     },
     get$length: function(_) {
       return this._collection$_length;
@@ -2428,7 +1637,7 @@ var $$ = Object.create(null);
         strings = this._strings;
         if (strings == null)
           return false;
-        return H.interceptedTypeCheck(strings[object], "$isLinkedHashSetCell") != null;
+        return strings[object] != null;
       } else
         return this._contains$1(object);
     },
@@ -2436,15 +1645,14 @@ var $$ = Object.create(null);
       var rest = this._rest;
       if (rest == null)
         return false;
-      return this._findBucketIndex$2(H.listTypeCheck(rest[this._computeHashCode$1(object)]), object) >= 0;
+      return this._findBucketIndex$2(rest[this._computeHashCode$1(object)], object) >= 0;
     },
     forEach$1: function(_, action) {
-      var t1, cell, modifications;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [this.$tv_E()])._assertCheck$1(action);
+      var cell, modifications;
       cell = this._first;
       modifications = this._modifications;
       for (; cell != null;) {
-        t1.call$1(cell._collection$_element);
+        action.call$1(cell.get$_collection$_element());
         if (modifications !== this._modifications)
           throw H.wrapException(P.ConcurrentModificationError$(this));
         cell = cell._next;
@@ -2452,12 +1660,10 @@ var $$ = Object.create(null);
     },
     add$1: function(_, element) {
       var strings, table, nums;
-      H.assertSubtypeOfRuntimeType(element, H.getTypeArgumentByIndex(this, 0));
       if (typeof element === "string" && element !== "__proto__") {
         strings = this._strings;
         if (strings == null) {
           table = Object.create(null);
-          H.assertHelper(table != null);
           table["<non-identifier-key>"] = table;
           delete table["<non-identifier-key>"];
           this._strings = table;
@@ -2468,7 +1674,6 @@ var $$ = Object.create(null);
         nums = this._nums;
         if (nums == null) {
           table = Object.create(null);
-          H.assertHelper(table != null);
           table["<non-identifier-key>"] = table;
           delete table["<non-identifier-key>"];
           this._nums = table;
@@ -2479,8 +1684,7 @@ var $$ = Object.create(null);
         return this._add$1(element);
     },
     _add$1: function(element) {
-      var rest, hash, bucket, t1;
-      H.assertSubtypeOfRuntimeType(element, H.getTypeArgumentByIndex(this, 0));
+      var rest, hash, bucket;
       rest = this._rest;
       if (rest == null) {
         rest = P._LinkedHashSet__newHashTable();
@@ -2488,11 +1692,9 @@ var $$ = Object.create(null);
       }
       hash = this._computeHashCode$1(element);
       bucket = rest[hash];
-      if (bucket == null) {
-        t1 = [this._newLinkedCell$1(element)];
-        H.assertHelper(t1 != null);
-        rest[hash] = t1;
-      } else {
+      if (bucket == null)
+        rest[hash] = [this._newLinkedCell$1(element)];
+      else {
         if (this._findBucketIndex$2(bucket, element) >= 0)
           return false;
         bucket.push(this._newLinkedCell$1(element));
@@ -2500,25 +1702,21 @@ var $$ = Object.create(null);
       return true;
     },
     _addHashTableEntry$2: function(table, element) {
-      var t1;
-      H.assertSubtypeOfRuntimeType(element, H.getTypeArgumentByIndex(this, 0));
-      if (H.interceptedTypeCheck(table[element], "$isLinkedHashSetCell") != null)
+      if (table[element] != null)
         return false;
-      t1 = this._newLinkedCell$1(element);
-      H.assertHelper(true);
-      table[element] = t1;
+      table[element] = this._newLinkedCell$1(element);
       return true;
     },
     _newLinkedCell$1: function(element) {
       var cell, last;
-      cell = new P.LinkedHashSetCell(H.assertSubtypeOfRuntimeType(element, H.getTypeArgumentByIndex(this, 0)), null, null);
+      cell = new P.LinkedHashSetCell(element, null, null);
       if (this._first == null) {
         this._last = cell;
         this._first = cell;
       } else {
         last = this._last;
         cell._previous = last;
-        last._next = cell;
+        last.set$_next(cell);
         this._last = cell;
       }
       ++this._collection$_length;
@@ -2534,40 +1732,24 @@ var $$ = Object.create(null);
         return -1;
       $length = bucket.length;
       for (i = 0; i < $length; ++i)
-        if (J.$eq(H.interceptedTypeCheck(bucket[i], "$isLinkedHashSetCell")._collection$_element, element))
+        if (J.$eq(bucket[i].get$_collection$_element(), element))
           return i;
       return -1;
     },
-    $isLinkedHashSet: true,
-    $isSet: true,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null,
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    },
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    },
     static: {_LinkedHashSet__newHashTable: function() {
         var table = Object.create(null);
-        H.assertHelper(table != null);
         table["<non-identifier-key>"] = table;
         delete table["<non-identifier-key>"];
         return table;
       }}
   },
   LinkedHashSetCell: {
-    "^": "Object;_collection$_element,_next,_previous",
-    $isLinkedHashSetCell: true
+    "^": "Object;_collection$_element<,_next@,_previous"
   },
   LinkedHashSetIterator: {
     "^": "Object;_set,_modifications,_cell,_collection$_current",
-    set$_collection$_current: function(_current) {
-      this._collection$_current = H.assertSubtypeOfRuntimeType(_current, H.getTypeArgumentByIndex(this, 0));
-    },
     get$current: function() {
-      return H.assertSubtypeOfRuntimeType(this._collection$_current, H.getTypeArgumentByIndex(this, 0));
+      return this._collection$_current;
     },
     moveNext$0: function() {
       var t1 = this._set;
@@ -2576,34 +1758,28 @@ var $$ = Object.create(null);
       else {
         t1 = this._cell;
         if (t1 == null) {
-          this.set$_collection$_current(null);
+          this._collection$_current = null;
           return false;
         } else {
-          this.set$_collection$_current(t1._collection$_element);
-          this._cell = this._cell._next;
+          this._collection$_current = t1.get$_collection$_element();
+          this._cell = this._cell.get$_next();
           return true;
         }
       }
-    },
-    $isIterator: true
+    }
   },
   _HashSetBase: {
-    "^": "SetBase;",
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    }
+    "^": "SetBase;"
   },
   IterableBase: {
     "^": "Object;",
     forEach$1: function(_, f) {
-      var t1, t2;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [this.$tv_E()])._assertCheck$1(f);
-      for (t2 = this.get$iterator(this); t2.moveNext$0();)
-        t1.call$1(H.assertSubtypeOfRuntimeType(t2.get$current(), H.getRuntimeTypeArgument(this, "IterableBase", 0)));
+      var t1;
+      for (t1 = this.get$iterator(this); t1.moveNext$0();)
+        f.call$1(t1.get$current());
     },
     get$length: function(_) {
       var it, count;
-      H.assertHelper(!this.$isEfficientLength);
       it = this.get$iterator(this);
       for (count = 0; it.moveNext$0();)
         ++count;
@@ -2614,93 +1790,59 @@ var $$ = Object.create(null);
       it = this.get$iterator(this);
       if (!it.moveNext$0())
         throw H.wrapException(H.IterableElementError_noElement());
-      result = H.assertSubtypeOfRuntimeType(it.get$current(), H.getRuntimeTypeArgument(this, "IterableBase", 0));
+      result = it.get$current();
       if (it.moveNext$0())
         throw H.wrapException(H.IterableElementError_tooMany());
-      return H.assertSubtypeOfRuntimeType(result, H.getRuntimeTypeArgument(this, "IterableBase", 0));
+      return result;
     },
     elementAt$1: function(_, index) {
       var t1, remaining, element;
       if (index < 0)
         throw H.wrapException(P.RangeError$value(index));
       for (t1 = this.get$iterator(this), remaining = index; t1.moveNext$0();) {
-        element = H.assertSubtypeOfRuntimeType(t1.get$current(), H.getRuntimeTypeArgument(this, "IterableBase", 0));
+        element = t1.get$current();
         if (remaining === 0)
-          return H.assertSubtypeOfRuntimeType(element, H.getRuntimeTypeArgument(this, "IterableBase", 0));
+          return element;
         --remaining;
       }
       throw H.wrapException(P.RangeError$value(index));
     },
     toString$0: function(_) {
       return P.IterableBase_iterableToShortString(this, "(", ")");
-    },
-    $isIterable: true,
-    $asIterable: null,
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
     }
-  },
-  LinkedHashSet: {
-    "^": "Object;",
-    $isLinkedHashSet: true,
-    $isSet: true,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null
   },
   ListBase: {
     "^": "Object_ListMixin;"
   },
   Object_ListMixin: {
-    "^": "Object+ListMixin;",
-    $isList: true,
-    $asList: null,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null
+    "^": "Object+ListMixin;"
   },
   ListMixin: {
     "^": "Object;",
     get$iterator: function(receiver) {
-      var t1, t2;
-      t1 = H.getRuntimeTypeArgument(receiver, "ListMixin", 0);
-      H.listSuperNativeTypeCheck(receiver, "$isIterable");
-      t2 = this.get$length(receiver);
-      return H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(receiver, "$isIterable"), t2, 0, H.assertSubtypeOfRuntimeType(null, t1)), [t1]), "$isIterator", [H.getRuntimeTypeArgument(receiver, "ListMixin", 0)], "$asIterator");
+      return new H.ListIterator(receiver, this.get$length(receiver), 0, null);
     },
     elementAt$1: function(receiver, index) {
-      return H.assertSubtypeOfRuntimeType(this.$index(receiver, index), H.getRuntimeTypeArgument(receiver, "ListMixin", 0));
+      return this.$index(receiver, index);
     },
     forEach$1: function(receiver, action) {
-      var t1, $length, i;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [H.convertRtiToRuntimeType(receiver.$builtinTypeInfo && receiver.$builtinTypeInfo[0])])._assertCheck$1(action);
+      var $length, i;
       $length = this.get$length(receiver);
       for (i = 0; i < $length; ++i) {
-        t1.call$1(this.$index(receiver, i));
+        action.call$1(this.$index(receiver, i));
         if ($length !== this.get$length(receiver))
           throw H.wrapException(P.ConcurrentModificationError$(receiver));
       }
     },
     where$1: function(receiver, test) {
-      var t1, t2, t3;
-      t1 = H.buildInterfaceType(P.bool);
-      t2 = H.buildFunctionType(t1, [H.convertRtiToRuntimeType(receiver.$builtinTypeInfo && receiver.$builtinTypeInfo[0])])._assertCheck$1(test);
-      t3 = H.getRuntimeTypeArgument(receiver, "ListMixin", 0);
-      H.listSuperNativeTypeCheck(receiver, "$isIterable");
-      H.buildFunctionType(t1, [H.convertRtiToRuntimeType(t3)])._assertCheck$1(t2);
-      return H.listSuperNativeTypeCheck(H.setRuntimeTypeInfo(new H.WhereIterable(H.listSuperNativeTypeCheck(receiver, "$isIterable"), H.buildFunctionType(t1, [H.getDynamicRuntimeType()])._assertCheck$1(t2)), [t3]), "$isIterable");
+      return H.setRuntimeTypeInfo(new H.WhereIterable(receiver, test), [H.getRuntimeTypeArgument(receiver, "ListMixin", 0)]);
     },
     toString$0: function(receiver) {
       return P.IterableBase_iterableToFullString(receiver, "[", "]");
-    },
-    $isList: true,
-    $asList: null,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null
+    }
   },
   Maps_mapToString_closure: {
-    "^": "Closure:10;box_0,result_1",
+    "^": "Closure;box_0,result_1",
     call$2: function(k, v) {
       var t1 = this.box_0;
       if (!t1.first_0)
@@ -2710,44 +1852,32 @@ var $$ = Object.create(null);
       t1.write$1(k);
       t1.write$1(": ");
       t1.write$1(v);
-    },
-    $isFunction: true
+    }
   },
   SetMixin: {
     "^": "Object;",
     addAll$1: function(_, elements) {
       var t1;
-      for (t1 = J.get$iterator$ax(H.listSuperNativeTypeCheck(elements, "$isIterable")); t1.moveNext$0();)
-        this.add$1(0, H.assertSubtypeOfRuntimeType(H.assertSubtypeOfRuntimeType(t1._current, H.getTypeArgumentByIndex(t1, 0)), H.getTypeArgumentByIndex(this, 0)));
+      for (t1 = J.get$iterator$ax(elements); t1.moveNext$0();)
+        this.add$1(0, t1._current);
     },
     toString$0: function(_) {
       return P.IterableBase_iterableToFullString(this, "{", "}");
     },
     forEach$1: function(_, f) {
-      var t1, t2;
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [this.$tv_E()])._assertCheck$1(f);
-      for (t2 = this.get$iterator(this); t2.moveNext$0();)
-        t1.call$1(H.assertSubtypeOfRuntimeType(H.assertSubtypeOfRuntimeType(t2._collection$_current, H.getTypeArgumentByIndex(t2, 0)), H.getTypeArgumentByIndex(this, 0)));
-    },
-    $isSet: true,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null,
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
+      var t1;
+      for (t1 = this.get$iterator(this); t1.moveNext$0();)
+        f.call$1(t1._collection$_current);
     }
   },
   SetBase: {
-    "^": "SetMixin;",
-    $tv_E: function() {
-      return H.convertRtiToRuntimeType(this.$builtinTypeInfo && this.$builtinTypeInfo[0]);
-    }
+    "^": "SetMixin;"
   }
 }],
 ["dart.core", "dart:core", , P, {
   "^": "",
   Error_safeToString: function(object) {
-    var buffer, t1, i, codeUnit, t2, str;
+    var buffer, t1, i, codeUnit, t2;
     if (typeof object === "number" || typeof object === "boolean" || null == object)
       return J.toString$0(object);
     if (typeof object === "string") {
@@ -2769,21 +1899,21 @@ var $$ = Object.create(null);
               buffer._contents = t2 + "1";
               codeUnit -= 16;
             }
-            str = H.Primitives_stringFromCharCode(codeUnit < 10 ? 48 + codeUnit : 87 + codeUnit);
-            buffer._contents += str;
+            t2 = H.Primitives_stringFromCharCode(codeUnit < 10 ? 48 + codeUnit : 87 + codeUnit);
+            buffer._contents += t2;
           }
         else if (codeUnit === 92)
           buffer._contents += "\\\\";
         else if (codeUnit === 34)
           buffer._contents += "\\\"";
         else {
-          str = H.Primitives_stringFromCharCode(codeUnit);
-          buffer._contents += str;
+          t2 = H.Primitives_stringFromCharCode(codeUnit);
+          buffer._contents += t2;
         }
       }
       buffer.write$1("\"");
       t1 = buffer._contents;
-      return H.stringTypeCheck(t1.charCodeAt(0) == 0 ? t1 : t1);
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
     }
     return H.Primitives_objectToString(object);
   },
@@ -2792,12 +1922,25 @@ var $$ = Object.create(null);
   },
   identical: [function(a, b) {
     return a == null ? b == null : a === b;
-  }, "call$2", "identical$closure", 4, 0, 2],
+  }, "call$2", "identical$closure", 4, 0, 3],
   identityHashCode: [function(object) {
     return H.objectHashCode(object);
-  }, "call$1", "identityHashCode$closure", 2, 0, 3],
+  }, "call$1", "identityHashCode$closure", 2, 0, 4],
+  List_List$from: function(other, growable, $E) {
+    var list, t1;
+    list = H.setRuntimeTypeInfo([], [$E]);
+    for (t1 = other.get$iterator(other); t1.moveNext$0();)
+      list.push(t1.get$current());
+    if (growable)
+      return list;
+    list.fixed$length = init;
+    return list;
+  },
   bool: {
     "^": "Object;",
+    toString$0: function(_) {
+      return this ? "true" : "false";
+    },
     $isbool: true
   },
   "+bool": 0,
@@ -2807,12 +1950,6 @@ var $$ = Object.create(null);
   "+double": 0,
   Error: {
     "^": "Object;"
-  },
-  AssertionError: {
-    "^": "Error;",
-    static: {AssertionError$: function() {
-        return new P.AssertionError();
-      }}
   },
   NullThrownError: {
     "^": "Error;",
@@ -2840,7 +1977,7 @@ var $$ = Object.create(null);
     static: {RangeError$: function(message) {
         return new P.RangeError(message);
       }, RangeError$value: function(value) {
-        return new P.RangeError("value " + H.S(H.numTypeCheck(value)));
+        return new P.RangeError("value " + H.S(value));
       }, RangeError$range: function(value, start, end) {
         return new P.RangeError("value " + value + " not in range " + start + ".." + H.S(end));
       }}
@@ -2869,7 +2006,6 @@ var $$ = Object.create(null);
     toString$0: function(_) {
       return "Bad state: " + this.message;
     },
-    $isStateError: true,
     static: {StateError$: function(message) {
         return new P.StateError(message);
       }}
@@ -2899,12 +2035,17 @@ var $$ = Object.create(null);
     "^": "Object;message",
     toString$0: function(_) {
       return "Exception: " + this.message;
-    },
-    $isException: true
+    }
   },
-  Function: {
-    "^": "Object;",
-    $isFunction: true
+  FormatException: {
+    "^": "Object;message,source,offset",
+    toString$0: function(_) {
+      var report = "" !== this.message ? "FormatException: " + this.message : "FormatException";
+      return report;
+    },
+    static: {FormatException$: function(message, source, offset) {
+        return new P.FormatException(message, source, offset);
+      }}
   },
   $int: {
     "^": "num;",
@@ -2912,16 +2053,10 @@ var $$ = Object.create(null);
   },
   "+int": 0,
   Iterator: {
-    "^": "Object;",
-    $isIterator: true
+    "^": "Object;"
   },
   List: {
-    "^": "Object;",
-    $isList: true,
-    $asList: null,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null
+    "^": "Object;"
   },
   "+List": 0,
   Null: {
@@ -2946,13 +2081,11 @@ var $$ = Object.create(null);
     },
     toString$0: function(_) {
       return H.Primitives_objectToString(this);
-    },
-    $isObject: true
+    }
   },
   String: {
     "^": "Object;",
-    $isString: true,
-    $isPattern: true
+    $isString: true
   },
   "+String": 0,
   StringBuffer: {
@@ -2961,7 +2094,7 @@ var $$ = Object.create(null);
       return this._contents.length;
     },
     write$1: function(obj) {
-      this._contents += H.stringTypeCheck(typeof obj === "string" ? obj : H.S(obj));
+      this._contents += typeof obj === "string" ? obj : H.S(obj);
     },
     writeAll$2: function(objects, separator) {
       var iterator, str;
@@ -2971,25 +2104,24 @@ var $$ = Object.create(null);
       if (separator.length === 0) {
         do {
           str = iterator.get$current();
-          this._contents += H.stringTypeCheck(typeof str === "string" ? str : H.S(str));
+          this._contents += typeof str === "string" ? str : H.S(str);
         } while (iterator.moveNext$0());
       } else {
         this.write$1(iterator.get$current());
         for (; iterator.moveNext$0();) {
           this._contents += separator;
           str = iterator.get$current();
-          this._contents += H.stringTypeCheck(typeof str === "string" ? str : H.S(str));
+          this._contents += typeof str === "string" ? str : H.S(str);
         }
       }
     },
     toString$0: function(_) {
       var t1 = this._contents;
-      return H.stringTypeCheck(t1.charCodeAt(0) == 0 ? t1 : t1);
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
     },
     StringBuffer$1: function($content) {
       this._contents = $content;
     },
-    $isStringBuffer: true,
     static: {StringBuffer$: function($content) {
         var t1 = new P.StringBuffer("");
         t1.StringBuffer$1($content);
@@ -3003,40 +2135,30 @@ var $$ = Object.create(null);
     var fragment, t1;
     fragment = J.createFragment$3$treeSanitizer$validator$x(document.body, html, treeSanitizer, validator);
     fragment.toString;
-    t1 = H.assertSubtype(new W._ChildNodeListLazy(fragment), "$isList", [W.Node], "$asList");
+    t1 = new W._ChildNodeListLazy(fragment);
     t1 = t1.where$1(t1, new W.Element_Element$html_closure());
-    return H.interceptedTypeCheck(t1.get$single(t1), "$isElement");
+    return t1.get$single(t1);
   },
   HtmlElement: {
     "^": "Element;",
-    "%": "HTMLAppletElement|HTMLAudioElement|HTMLBRElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFontElement|HTMLFrameElement|HTMLFrameSetElement|HTMLHRElement|HTMLHeadingElement|HTMLHtmlElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLMarqueeElement|HTMLMediaElement|HTMLMenuElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLOptionElement|HTMLParagraphElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableHeaderCellElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement|HTMLVideoElement;HTMLElement"
+    "%": "HTMLAppletElement|HTMLBRElement|HTMLCanvasElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLFontElement|HTMLFrameElement|HTMLFrameSetElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLOptionElement|HTMLParagraphElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLShadowElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableHeaderCellElement|HTMLTitleElement|HTMLUListElement|HTMLUnknownElement;HTMLElement"
   },
   AnchorElement: {
-    "^": "HtmlElement;",
-    set$href: function(receiver, href) {
-      receiver.href = H.stringTypeCheck(href);
-    },
+    "^": "HtmlElement;hostname=,href},port=,protocol=",
     toString$0: function(receiver) {
       return receiver.toString();
     },
-    $isAnchorElement: true,
     "%": "HTMLAnchorElement"
   },
   AreaElement: {
-    "^": "HtmlElement;",
-    set$href: function(receiver, href) {
-      receiver.href = H.stringTypeCheck(href);
-    },
+    "^": "HtmlElement;hostname=,href},port=,protocol=",
     toString$0: function(receiver) {
       return receiver.toString();
     },
     "%": "HTMLAreaElement"
   },
   BaseElement: {
-    "^": "HtmlElement;",
-    set$href: function(receiver, href) {
-      receiver.href = H.stringTypeCheck(href);
-    },
+    "^": "HtmlElement;href}",
     "%": "HTMLBaseElement"
   },
   BodyElement: {
@@ -3052,24 +2174,6 @@ var $$ = Object.create(null);
     "^": "Node;length=",
     "%": "CDATASection|CharacterData|Comment|ProcessingInstruction|Text"
   },
-  Document: {
-    "^": "Node;",
-    adoptNode$1: function(receiver, node) {
-      return receiver.adoptNode(node);
-    },
-    _createElement$2: function(receiver, localName_OR_tagName, typeExtension) {
-      return receiver.createElement(localName_OR_tagName, typeExtension);
-    },
-    querySelector$1: function(receiver, selectors) {
-      return receiver.querySelector(selectors);
-    },
-    "%": "XMLDocument;Document"
-  },
-  DocumentFragment: {
-    "^": "Node;",
-    $isDocumentFragment: true,
-    "%": "DocumentFragment|ShadowRoot"
-  },
   DomException: {
     "^": "Interceptor;",
     toString$0: function(receiver) {
@@ -3077,27 +2181,54 @@ var $$ = Object.create(null);
     },
     "%": "DOMException"
   },
-  DomImplementation: {
-    "^": "Interceptor;",
-    createHtmlDocument$1: function(receiver, title) {
-      return receiver.createHTMLDocument(title);
-    },
-    "%": "DOMImplementation"
-  },
   Element: {
     "^": "Node;",
+    get$attributes: function(receiver) {
+      return new W._ElementAttributeMap(receiver);
+    },
     toString$0: function(receiver) {
       return receiver.localName;
+    },
+    insertAdjacentHtml$2: function(receiver, where, html) {
+      var t1, t2, first;
+      if (!!receiver.insertAdjacentHTML)
+        receiver.insertAdjacentHTML(where, html);
+      else {
+        t1 = J.createFragment$3$treeSanitizer$validator$x(document.body, html, null, null);
+        switch (where.toLowerCase()) {
+          case "beforebegin":
+            receiver.parentNode.insertBefore(t1, receiver);
+            break;
+          case "afterbegin":
+            if (receiver.childNodes.length > 0) {
+              t2 = receiver.childNodes;
+              if (0 >= t2.length)
+                return H.ioore(t2, 0);
+              first = t2[0];
+            } else
+              first = null;
+            receiver.insertBefore(t1, first);
+            break;
+          case "beforeend":
+            receiver.appendChild(t1);
+            break;
+          case "afterend":
+            receiver.parentNode.insertBefore(t1, receiver.nextSibling);
+            break;
+          default:
+            H.throwExpression(P.ArgumentError$("Invalid position " + where));
+        }
+      }
     },
     createFragment$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
       var t1, t2, base, contextElement, fragment;
       if (treeSanitizer == null) {
         t1 = $.Element__defaultValidator;
         if (t1 == null) {
-          t1 = H.assertSubtype(H.setRuntimeTypeInfo([], [W.NodeValidator]), "$isList", [W.NodeValidator], "$asList");
+          t1 = H.setRuntimeTypeInfo([], [W.NodeValidator]);
           t2 = new W.NodeValidatorBuilder(t1);
-          C.JSArray_methods.add$1(t1, W._Html5NodeValidator$(null));
-          C.JSArray_methods.add$1(t1, W._TemplatingNodeValidator$());
+          t1.push(W._Html5NodeValidator$(null));
+          t1.push(W._TemplatingNodeValidator$());
           $.Element__defaultValidator = t2;
           validator = t2;
         } else
@@ -3113,34 +2244,34 @@ var $$ = Object.create(null);
         }
       }
       if ($.Element__parseDocument == null) {
-        t1 = J.createHtmlDocument$1$x(document.implementation, "");
+        t1 = document.implementation.createHTMLDocument("");
         $.Element__parseDocument = t1;
         $.Element__parseRange = t1.createRange();
-        base = J._createElement$2$x($.Element__parseDocument, "base", null);
+        base = $.Element__parseDocument.createElement("base", null);
         J.set$href$x(base, document.baseURI);
-        J.append$1$x($.Element__parseDocument.head, base);
+        $.Element__parseDocument.head.appendChild(base);
       }
       t1 = $.Element__parseDocument;
       if (!!this.$isBodyElement)
         contextElement = t1.body;
       else {
-        contextElement = J._createElement$2$x(t1, receiver.tagName, null);
-        J.append$1$x($.Element__parseDocument.body, contextElement);
+        contextElement = t1.createElement(receiver.tagName, null);
+        $.Element__parseDocument.body.appendChild(contextElement);
       }
       if ("createContextualFragment" in window.Range.prototype) {
-        J.selectNodeContents$1$x($.Element__parseRange, contextElement);
-        fragment = J.createContextualFragment$1$x($.Element__parseRange, html);
+        $.Element__parseRange.selectNodeContents(contextElement);
+        fragment = $.Element__parseRange.createContextualFragment(html);
       } else {
         contextElement.innerHTML = html;
         fragment = $.Element__parseDocument.createDocumentFragment();
-        for (t1 = J.getInterceptor$x(fragment); t2 = contextElement.firstChild, t2 != null;)
-          t1.append$1(fragment, t2);
+        for (; t1 = contextElement.firstChild, t1 != null;)
+          fragment.appendChild(t1);
       }
       t1 = $.Element__parseDocument.body;
       if (contextElement == null ? t1 != null : contextElement !== t1)
         J.remove$0$ax(contextElement);
       treeSanitizer.sanitizeTree$1(fragment);
-      C.HtmlDocument_methods.adoptNode$1(document, fragment);
+      document.adoptNode(fragment);
       return fragment;
     },
     createFragment$2$treeSanitizer: function($receiver, html, treeSanitizer) {
@@ -3151,7 +2282,7 @@ var $$ = Object.create(null);
     },
     setInnerHtml$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
       receiver.textContent = null;
-      this.append$1(receiver, this.createFragment$3$treeSanitizer$validator(receiver, html, treeSanitizer, validator));
+      receiver.appendChild(this.createFragment$3$treeSanitizer$validator(receiver, html, treeSanitizer, validator));
     },
     setInnerHtml$1: function($receiver, html) {
       return this.setInnerHtml$3$treeSanitizer$validator($receiver, html, null, null);
@@ -3159,14 +2290,11 @@ var $$ = Object.create(null);
     getAttribute$1: function(receiver, $name) {
       return receiver.getAttribute($name);
     },
-    _removeAttribute$1: function(receiver, $name) {
-      return receiver.removeAttribute($name);
-    },
     $isElement: true,
     "%": ";Element"
   },
   EmbedElement: {
-    "^": "HtmlElement;name=",
+    "^": "HtmlElement;name=,src}",
     "%": "HTMLEmbedElement"
   },
   EventTarget: {
@@ -3181,29 +2309,17 @@ var $$ = Object.create(null);
     "^": "HtmlElement;length=,name=",
     "%": "HTMLFormElement"
   },
-  HeadElement: {
-    "^": "HtmlElement;",
-    $isHeadElement: true,
-    "%": "HTMLHeadElement"
-  },
-  HtmlDocument: {
-    "^": "Document;",
-    $isHtmlDocument: true,
-    "%": "HTMLDocument"
-  },
   IFrameElement: {
-    "^": "HtmlElement;name=",
+    "^": "HtmlElement;name=,src}",
     "%": "HTMLIFrameElement"
   },
   ImageElement: {
-    "^": "HtmlElement;",
-    $isImageElement: true,
+    "^": "HtmlElement;src}",
     "%": "HTMLImageElement"
   },
   InputElement: {
-    "^": "HtmlElement;name=",
+    "^": "HtmlElement;name=,src}",
     $isElement: true,
-    $isNode: true,
     "%": "HTMLInputElement"
   },
   KeygenElement: {
@@ -3211,10 +2327,7 @@ var $$ = Object.create(null);
     "%": "HTMLKeygenElement"
   },
   LinkElement: {
-    "^": "HtmlElement;",
-    set$href: function(receiver, href) {
-      receiver.href = H.stringTypeCheck(href);
-    },
+    "^": "HtmlElement;href}",
     "%": "HTMLLinkElement"
   },
   Location: {
@@ -3222,12 +2335,15 @@ var $$ = Object.create(null);
     toString$0: function(receiver) {
       return receiver.toString();
     },
-    $isLocation: true,
     "%": "Location"
   },
   MapElement: {
     "^": "HtmlElement;name=",
     "%": "HTMLMapElement"
+  },
+  MediaElement: {
+    "^": "HtmlElement;src}",
+    "%": "HTMLAudioElement|HTMLMediaElement|HTMLVideoElement"
   },
   MetaElement: {
     "^": "HtmlElement;name=",
@@ -3235,23 +2351,19 @@ var $$ = Object.create(null);
   },
   Node: {
     "^": "EventTarget;",
+    get$nodes: function(receiver) {
+      return new W._ChildNodeListLazy(receiver);
+    },
     remove$0: function(receiver) {
       var t1 = receiver.parentNode;
       if (t1 != null)
-        J._removeChild$1$x(t1, receiver);
+        t1.removeChild(receiver);
     },
     toString$0: function(receiver) {
       var t1 = receiver.nodeValue;
       return t1 == null ? J.Interceptor.prototype.toString$0.call(this, receiver) : t1;
     },
-    append$1: function(receiver, newChild) {
-      return receiver.appendChild(newChild);
-    },
-    _removeChild$1: function(receiver, oldChild) {
-      return receiver.removeChild(oldChild);
-    },
-    $isNode: true,
-    "%": "DocumentType|Notation;Node"
+    "%": "Document|DocumentFragment|DocumentType|HTMLDocument|Notation|ShadowRoot|XMLDocument;Node"
   },
   NodeList: {
     "^": "Interceptor_ListMixin_ImmutableListMixin;",
@@ -3268,15 +2380,6 @@ var $$ = Object.create(null);
       if (index < 0 || index >= receiver.length)
         return H.ioore(receiver, index);
       return receiver[index];
-    },
-    $isList: true,
-    $asList: function() {
-      return [W.Node];
-    },
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: function() {
-      return [W.Node];
     },
     $isJavaScriptIndexingBehavior: true,
     "%": "NodeList|RadioNodeList"
@@ -3295,37 +2398,35 @@ var $$ = Object.create(null);
   },
   Range: {
     "^": "Interceptor;",
-    createContextualFragment$1: function(receiver, html) {
-      return receiver.createContextualFragment(html);
-    },
-    selectNodeContents$1: function(receiver, refNode) {
-      return receiver.selectNodeContents(refNode);
-    },
     toString$0: function(receiver) {
       return receiver.toString();
     },
-    $isRange: true,
     "%": "Range"
+  },
+  ScriptElement0: {
+    "^": "HtmlElement;src}",
+    "%": "HTMLScriptElement"
   },
   SelectElement: {
     "^": "HtmlElement;length=,name=",
     "%": "HTMLSelectElement"
   },
+  SourceElement: {
+    "^": "HtmlElement;src}",
+    "%": "HTMLSourceElement"
+  },
   TableElement: {
     "^": "HtmlElement;",
     createFragment$3$treeSanitizer$validator: function(receiver, html, treeSanitizer, validator) {
-      var table, fragment, t1;
+      var table, fragment;
       if ("createContextualFragment" in window.Range.prototype)
         return W.Element.prototype.createFragment$3$treeSanitizer$validator.call(this, receiver, html, treeSanitizer, validator);
       table = W.Element_Element$html("<table>" + html + "</table>", treeSanitizer, validator);
       fragment = document.createDocumentFragment();
       fragment.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(fragment), "$isList", [W.Node], "$asList");
-      table.toString;
-      t1.addAll$1(0, H.assertSubtype(new W._ChildNodeListLazy(table), "$isList", [W.Node], "$asList"));
+      new W._ChildNodeListLazy(fragment).addAll$1(0, J.get$nodes$x(table));
       return fragment;
     },
-    $isTableElement: true,
     "%": "HTMLTableElement"
   },
   TableRowElement: {
@@ -3335,17 +2436,16 @@ var $$ = Object.create(null);
       if ("createContextualFragment" in window.Range.prototype)
         return W.Element.prototype.createFragment$3$treeSanitizer$validator.call(this, receiver, html, treeSanitizer, validator);
       fragment = document.createDocumentFragment();
-      t1 = J.createFragment$3$treeSanitizer$validator$x(H.interceptedTypeCheck(C.HtmlDocument_methods._createElement$2(document, "table", null), "$isTableElement"), html, treeSanitizer, validator);
+      t1 = J.createFragment$3$treeSanitizer$validator$x(document.createElement("table", null), html, treeSanitizer, validator);
       t1.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(t1), "$isList", [W.Node], "$asList");
+      t1 = new W._ChildNodeListLazy(t1);
       section = t1.get$single(t1);
       section.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(section), "$isList", [W.Node], "$asList");
+      t1 = new W._ChildNodeListLazy(section);
       row = t1.get$single(t1);
       fragment.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(fragment), "$isList", [W.Node], "$asList");
       row.toString;
-      t1.addAll$1(0, H.assertSubtype(new W._ChildNodeListLazy(row), "$isList", [W.Node], "$asList"));
+      new W._ChildNodeListLazy(fragment).addAll$1(0, new W._ChildNodeListLazy(row));
       return fragment;
     },
     "%": "HTMLTableRowElement"
@@ -3357,14 +2457,13 @@ var $$ = Object.create(null);
       if ("createContextualFragment" in window.Range.prototype)
         return W.Element.prototype.createFragment$3$treeSanitizer$validator.call(this, receiver, html, treeSanitizer, validator);
       fragment = document.createDocumentFragment();
-      t1 = J.createFragment$3$treeSanitizer$validator$x(H.interceptedTypeCheck(C.HtmlDocument_methods._createElement$2(document, "table", null), "$isTableElement"), html, treeSanitizer, validator);
+      t1 = J.createFragment$3$treeSanitizer$validator$x(document.createElement("table", null), html, treeSanitizer, validator);
       t1.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(t1), "$isList", [W.Node], "$asList");
+      t1 = new W._ChildNodeListLazy(t1);
       section = t1.get$single(t1);
       fragment.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(fragment), "$isList", [W.Node], "$asList");
       section.toString;
-      t1.addAll$1(0, H.assertSubtype(new W._ChildNodeListLazy(section), "$isList", [W.Node], "$asList"));
+      new W._ChildNodeListLazy(fragment).addAll$1(0, new W._ChildNodeListLazy(section));
       return fragment;
     },
     "%": "HTMLTableSectionElement"
@@ -3375,7 +2474,7 @@ var $$ = Object.create(null);
       var fragment;
       receiver.textContent = null;
       fragment = this.createFragment$3$treeSanitizer$validator(receiver, html, treeSanitizer, validator);
-      J.append$1$x(receiver.content, fragment);
+      receiver.content.appendChild(fragment);
     },
     setInnerHtml$1: function($receiver, html) {
       return this.setInnerHtml$3$treeSanitizer$validator($receiver, html, null, null);
@@ -3387,12 +2486,15 @@ var $$ = Object.create(null);
     "^": "HtmlElement;name=",
     "%": "HTMLTextAreaElement"
   },
+  TrackElement: {
+    "^": "HtmlElement;src}",
+    "%": "HTMLTrackElement"
+  },
   Window: {
     "^": "EventTarget;",
     toString$0: function(receiver) {
       return receiver.toString();
     },
-    $isWindow: true,
     "%": "DOMWindow|Window"
   },
   _Attr: {
@@ -3415,30 +2517,41 @@ var $$ = Object.create(null);
         return H.ioore(receiver, index);
       return receiver[index];
     },
-    $isList: true,
-    $asList: function() {
-      return [W.Node];
-    },
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: function() {
-      return [W.Node];
-    },
     $isJavaScriptIndexingBehavior: true,
     "%": "MozNamedAttrMap|NamedNodeMap"
   },
-  Blob: {
-    "^": "Interceptor;"
+  _FrozenElementList: {
+    "^": "ListBase;_nodeList,_elementList",
+    get$length: function(_) {
+      return this._nodeList.length;
+    },
+    $index: function(_, index) {
+      var t1 = this._nodeList;
+      if (index < 0 || index >= t1.length)
+        return H.ioore(t1, index);
+      return t1[index];
+    },
+    _html$_FrozenElementList$_wrap$1: function(_nodeList, $T) {
+      var t1 = C.NodeList_methods.where$1(this._nodeList, new W._FrozenElementList$_wrap_closure());
+      this._elementList = P.List_List$from(t1, true, H.getRuntimeTypeArgument(t1, "IterableBase", 0));
+    },
+    static: {_FrozenElementList$_wrap: function(_nodeList, $T) {
+        var t1 = H.setRuntimeTypeInfo(new W._FrozenElementList(_nodeList, null), [$T]);
+        t1._html$_FrozenElementList$_wrap$1(_nodeList, $T);
+        return t1;
+      }}
   },
-  Element_Element$html_closure: {
-    "^": "Closure:7;",
+  _FrozenElementList$_wrap_closure: {
+    "^": "Closure;",
     call$1: function(e) {
       return !!J.getInterceptor(e).$isElement;
-    },
-    $isFunction: true
+    }
   },
-  File: {
-    "^": "Blob;"
+  Element_Element$html_closure: {
+    "^": "Closure;",
+    call$1: function(e) {
+      return !!J.getInterceptor(e).$isElement;
+    }
   },
   _ChildNodeListLazy: {
     "^": "ListBase;_this",
@@ -3453,17 +2566,16 @@ var $$ = Object.create(null);
       return t1.firstChild;
     },
     addAll$1: function(_, iterable) {
-      var t1, t2, len, t3, i;
-      H.listSuperNativeTypeCheck(iterable, "$isIterable");
+      var t1, t2, len, i;
       t1 = iterable._this;
       t2 = this._this;
       if (t1 !== t2)
-        for (len = t1.childNodes.length, t3 = J.getInterceptor$x(t2), i = 0; i < len; ++i)
-          t3.append$1(t2, t1.firstChild);
+        for (len = t1.childNodes.length, i = 0; i < len; ++i)
+          t2.appendChild(t1.firstChild);
       return;
     },
     get$iterator: function(_) {
-      return H.assertSubtype(C.NodeList_methods.get$iterator(this._this.childNodes), "$isIterator", [W.Node], "$asIterator");
+      return C.NodeList_methods.get$iterator(this._this.childNodes);
     },
     get$length: function(_) {
       return this._this.childNodes.length;
@@ -3474,80 +2586,32 @@ var $$ = Object.create(null);
         return H.ioore(t1, index);
       return t1[index];
     },
-    $is_ChildNodeListLazy: true,
     $asListBase: function() {
       return [W.Node];
     },
     $asObject_ListMixin: function() {
       return [W.Node];
-    },
-    $asListMixin: function() {
-      return [W.Node];
-    },
-    $asList: function() {
-      return [W.Node];
-    },
-    $asIterable: function() {
-      return [W.Node];
     }
   },
   Interceptor_ListMixin: {
-    "^": "Interceptor+ListMixin;",
-    $isList: true,
-    $asList: function() {
-      return [W.Node];
-    },
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: function() {
-      return [W.Node];
-    }
+    "^": "Interceptor+ListMixin;"
   },
   Interceptor_ListMixin_ImmutableListMixin: {
-    "^": "Interceptor_ListMixin+ImmutableListMixin;",
-    $isList: true,
-    $asList: function() {
-      return [W.Node];
-    },
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: function() {
-      return [W.Node];
-    }
+    "^": "Interceptor_ListMixin+ImmutableListMixin;"
   },
   Interceptor_ListMixin0: {
-    "^": "Interceptor+ListMixin;",
-    $isList: true,
-    $asList: function() {
-      return [W.Node];
-    },
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: function() {
-      return [W.Node];
-    }
+    "^": "Interceptor+ListMixin;"
   },
   Interceptor_ListMixin_ImmutableListMixin0: {
-    "^": "Interceptor_ListMixin0+ImmutableListMixin;",
-    $isList: true,
-    $asList: function() {
-      return [W.Node];
-    },
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: function() {
-      return [W.Node];
-    }
+    "^": "Interceptor_ListMixin0+ImmutableListMixin;"
   },
   _AttributeMap: {
     "^": "Object;",
     forEach$1: function(_, f) {
-      var t1, t2, t3, t4, key;
-      t1 = H.buildInterfaceType(P.String);
-      t1 = H.buildFunctionType(H.getVoidRuntimeType(), [t1, t1])._assertCheck$1(f);
-      for (t2 = this.get$keys(), t3 = H.getTypeArgumentByIndex(t2, 0), H.listSuperNativeTypeCheck(t2, "$isIterable"), t4 = t2.length, t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(t2, "$isIterable"), t4, 0, H.assertSubtypeOfRuntimeType(null, t3)), [t3]), "$isIterator", [H.getTypeArgumentByIndex(t2, 0)], "$asIterator"); t2.moveNext$0();) {
-        key = H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0));
-        t1.call$2(key, this.$index(0, key));
+      var t1, key;
+      for (t1 = this.get$keys(), t1 = new H.ListIterator(t1, t1.length, 0, null); t1.moveNext$0();) {
+        key = t1._current;
+        f.call$2(key, this.$index(0, key));
       }
     },
     get$keys: function() {
@@ -3560,20 +2624,16 @@ var $$ = Object.create(null);
         if (this._matches$1(attributes[i])) {
           if (i >= attributes.length)
             return H.ioore(attributes, i);
-          C.JSArray_methods.add$1(keys, J.get$name$x(attributes[i]));
+          keys.push(J.get$name$x(attributes[i]));
         }
       }
-      return H.listSuperNativeTypeCheck(keys, "$isIterable");
-    },
-    $isMap: true,
-    $asMap: function() {
-      return [P.String, P.String];
+      return keys;
     }
   },
   _ElementAttributeMap: {
     "^": "_AttributeMap;_element",
     $index: function(_, key) {
-      return J.getAttribute$1$x(this._element, H.stringTypeCheck(key));
+      return this._element.getAttribute(key);
     },
     get$length: function(_) {
       return this.get$keys().length;
@@ -3583,7 +2643,7 @@ var $$ = Object.create(null);
     }
   },
   _Html5NodeValidator: {
-    "^": "Object;uriPolicy",
+    "^": "Object;uriPolicy<",
     allowsElement$1: function(element) {
       return $.get$_Html5NodeValidator__allowedElements().contains$1(0, element.tagName);
     },
@@ -3596,49 +2656,41 @@ var $$ = Object.create(null);
         validator = t1.$index(0, "*::" + attributeName);
       if (validator == null)
         return false;
-      return H.boolTypeCheck(validator.call$4(element, attributeName, value, this));
+      return validator.call$4(element, attributeName, value, this);
     },
     _Html5NodeValidator$1$uriPolicy: function(uriPolicy) {
       var t1, t2;
       t1 = $.get$_Html5NodeValidator__attributeValidators();
       if (t1.get$isEmpty(t1)) {
-        for (t2 = H.getTypeArgumentByIndex(C.List_1GN, 0), H.listSuperNativeTypeCheck(C.List_1GN, "$isIterable"), t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(C.List_1GN, "$isIterable"), 261, 0, H.assertSubtypeOfRuntimeType(null, t2)), [t2]), "$isIterator", [H.getTypeArgumentByIndex(C.List_1GN, 0)], "$asIterator"); t2.moveNext$0();)
-          t1.$indexSet(0, H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0)), W._Html5NodeValidator__standardAttributeValidator$closure());
-        for (t2 = H.getTypeArgumentByIndex(C.List_yrN, 0), H.listSuperNativeTypeCheck(C.List_yrN, "$isIterable"), t2 = H.assertSubtype(H.setRuntimeTypeInfo(new H.ListIterator(H.listSuperNativeTypeCheck(C.List_yrN, "$isIterable"), 12, 0, H.assertSubtypeOfRuntimeType(null, t2)), [t2]), "$isIterator", [H.getTypeArgumentByIndex(C.List_yrN, 0)], "$asIterator"); t2.moveNext$0();)
-          t1.$indexSet(0, H.assertSubtypeOfRuntimeType(t2._current, H.getTypeArgumentByIndex(t2, 0)), W._Html5NodeValidator__uriAttributeValidator$closure());
+        for (t2 = new H.ListIterator(C.List_1GN, 261, 0, null); t2.moveNext$0();)
+          t1.$indexSet(0, t2._current, W._Html5NodeValidator__standardAttributeValidator$closure());
+        for (t2 = new H.ListIterator(C.List_yrN, 12, 0, null); t2.moveNext$0();)
+          t1.$indexSet(0, t2._current, W._Html5NodeValidator__uriAttributeValidator$closure());
       }
     },
-    $is_Html5NodeValidator: true,
-    $isNodeValidator: true,
     static: {"^": "_Html5NodeValidator__allowedElements,_Html5NodeValidator__standardAttributes,_Html5NodeValidator__uriAttributes,_Html5NodeValidator__attributeValidators", _Html5NodeValidator$: function(uriPolicy) {
         var e, t1;
-        e = C.HtmlDocument_methods._createElement$2(document, "a", null);
-        t1 = new W._SameOriginUriPolicy(H.interceptedTypeCheck(e, "$isAnchorElement"), window.location);
+        e = document.createElement("a", null);
+        t1 = new W._SameOriginUriPolicy(e, window.location);
         t1 = new W._Html5NodeValidator(t1);
         t1._Html5NodeValidator$1$uriPolicy(uriPolicy);
         return t1;
       }, _Html5NodeValidator__standardAttributeValidator: [function(element, attributeName, value, context) {
-        H.interceptedTypeCheck(element, "$isElement");
-        H.stringTypeCheck(attributeName);
-        H.stringTypeCheck(value);
-        H.interceptedTypeCheck(context, "$is_Html5NodeValidator");
         return true;
-      }, "call$4", "_Html5NodeValidator__standardAttributeValidator$closure", 8, 0, 4], _Html5NodeValidator__uriAttributeValidator: [function(element, attributeName, value, context) {
+      }, "call$4", "_Html5NodeValidator__standardAttributeValidator$closure", 8, 0, 5], _Html5NodeValidator__uriAttributeValidator: [function(element, attributeName, value, context) {
         var t1, t2, t3, t4, t5;
-        H.interceptedTypeCheck(element, "$isElement");
-        H.stringTypeCheck(attributeName);
-        H.stringTypeCheck(value);
-        t1 = H.interceptedTypeCheck(context, "$is_Html5NodeValidator").uriPolicy;
+        t1 = context.get$uriPolicy();
         t2 = t1._hiddenAnchor;
-        t2.href = value;
-        t3 = t2.hostname;
+        t3 = J.getInterceptor$x(t2);
+        t3.set$href(t2, value);
+        t4 = t3.get$hostname(t2);
         t1 = t1._loc;
-        t4 = t1.hostname;
-        if (t3 == null ? t4 == null : t3 === t4) {
-          t4 = t2.port;
+        t5 = t1.hostname;
+        if (t4 == null ? t5 == null : t4 === t5) {
+          t4 = t3.get$port(t2);
           t5 = t1.port;
           if (t4 == null ? t5 == null : t4 === t5) {
-            t4 = t2.protocol;
+            t4 = t3.get$protocol(t2);
             t1 = t1.protocol;
             t1 = t4 == null ? t1 == null : t4 === t1;
           } else
@@ -3646,62 +2698,41 @@ var $$ = Object.create(null);
         } else
           t1 = false;
         if (!t1)
-          t1 = t3 === "" && t2.port === "" && t2.protocol === ":";
+          t1 = t3.get$hostname(t2) === "" && t3.get$port(t2) === "" && t3.get$protocol(t2) === ":";
         else
           t1 = true;
         return t1;
-      }, "call$4", "_Html5NodeValidator__uriAttributeValidator$closure", 8, 0, 4]}
+      }, "call$4", "_Html5NodeValidator__uriAttributeValidator$closure", 8, 0, 5]}
   },
   ImmutableListMixin: {
     "^": "Object;",
     get$iterator: function(receiver) {
-      var t1, t2;
-      t1 = H.getRuntimeTypeArgument(receiver, "ImmutableListMixin", 0);
-      H.assertSubtype(receiver, "$isList", [t1], "$asList");
-      t2 = this.get$length(receiver);
-      return H.assertSubtype(H.setRuntimeTypeInfo(new W.FixedSizeListIterator(H.assertSubtype(receiver, "$isList", [t1], "$asList"), t2, -1, H.assertSubtypeOfRuntimeType(null, t1)), [t1]), "$isIterator", [H.getRuntimeTypeArgument(receiver, "ImmutableListMixin", 0)], "$asIterator");
-    },
-    $isList: true,
-    $asList: null,
-    $isEfficientLength: true,
-    $isIterable: true,
-    $asIterable: null
+      return new W.FixedSizeListIterator(receiver, this.get$length(receiver), -1, null);
+    }
   },
   NodeValidatorBuilder: {
     "^": "Object;_validators",
     allowsElement$1: function(element) {
-      var t1, t2;
-      t1 = this._validators;
-      t2 = new W.NodeValidatorBuilder_allowsElement_closure(element);
-      H.buildFunctionType(H.buildInterfaceType(P.bool), [H.convertRtiToRuntimeType(t1.$builtinTypeInfo && t1.$builtinTypeInfo[0])])._assertCheck$1(t2);
-      return H.IterableMixinWorkaround_any(t1, t2);
+      return H.IterableMixinWorkaround_any(this._validators, new W.NodeValidatorBuilder_allowsElement_closure(element));
     },
     allowsAttribute$3: function(element, attributeName, value) {
-      var t1, t2;
-      t1 = this._validators;
-      t2 = new W.NodeValidatorBuilder_allowsAttribute_closure(element, attributeName, value);
-      H.buildFunctionType(H.buildInterfaceType(P.bool), [H.convertRtiToRuntimeType(t1.$builtinTypeInfo && t1.$builtinTypeInfo[0])])._assertCheck$1(t2);
-      return H.IterableMixinWorkaround_any(t1, t2);
-    },
-    $isNodeValidatorBuilder: true,
-    $isNodeValidator: true
+      return H.IterableMixinWorkaround_any(this._validators, new W.NodeValidatorBuilder_allowsAttribute_closure(element, attributeName, value));
+    }
   },
   NodeValidatorBuilder_allowsElement_closure: {
-    "^": "Closure:7;element_0",
+    "^": "Closure;element_0",
     call$1: function(v) {
       return v.allowsElement$1(this.element_0);
-    },
-    $isFunction: true
+    }
   },
   NodeValidatorBuilder_allowsAttribute_closure: {
-    "^": "Closure:7;element_0,attributeName_1,value_2",
+    "^": "Closure;element_0,attributeName_1,value_2",
     call$1: function(v) {
       return v.allowsAttribute$3(this.element_0, this.attributeName_1, this.value_2);
-    },
-    $isFunction: true
+    }
   },
   _SimpleNodeValidator: {
-    "^": "Object;",
+    "^": "Object;uriPolicy<",
     allowsElement$1: function(element) {
       return this.allowedElements.contains$1(0, element.tagName);
     },
@@ -3725,8 +2756,7 @@ var $$ = Object.create(null);
           return true;
       }
       return false;
-    },
-    $isNodeValidator: true
+    }
   },
   _TemplatingNodeValidator: {
     "^": "_SimpleNodeValidator;_templateAttrs,allowedElements,allowedAttributes,allowedUriAttributes,uriPolicy",
@@ -3735,46 +2765,29 @@ var $$ = Object.create(null);
         return true;
       if (attributeName === "template" && value === "")
         return true;
-      H.assertSubtype(new W._ElementAttributeMap(element), "$isMap", [P.String, P.String], "$asMap");
-      if (J.getAttribute$1$x(element, "template") === "")
+      if (element.getAttribute("template") === "")
         return this._templateAttrs.contains$1(0, attributeName);
       return false;
     },
     static: {"^": "_TemplatingNodeValidator__TEMPLATE_ATTRS", _TemplatingNodeValidator$: function() {
-        var t1, t2, t3, t4, t5;
-        t1 = ["TEMPLATE"];
-        t2 = new W._TemplatingNodeValidator_closure();
-        t3 = H.getDynamicRuntimeType();
-        H.buildFunctionType(t3, [H.convertRtiToRuntimeType(C.List_wSV.$builtinTypeInfo && C.List_wSV.$builtinTypeInfo[0])])._assertCheck$1(t2);
-        H.buildFunctionType(t3, [t3])._assertCheck$1(t2);
-        H.listSuperNativeTypeCheck(C.List_wSV, "$isIterable");
-        t3 = H.buildFunctionType(H.convertRtiToRuntimeType(null), [H.convertRtiToRuntimeType(null)]);
-        t3._assertCheck$1(t2);
-        t2 = H.setRuntimeTypeInfo(new H.MappedListIterable(H.listSuperNativeTypeCheck(C.List_wSV, "$isIterable"), t3._assertCheck$1(t2)), [null, null]);
-        H.listSuperNativeTypeCheck(t1, "$isIterable");
+        var t1, t2, t3, t4;
+        t1 = H.setRuntimeTypeInfo(new H.MappedListIterable(C.List_wSV, new W._TemplatingNodeValidator_closure()), [null, null]);
+        t2 = P.LinkedHashSet_LinkedHashSet(null, null, null, null);
+        t2.addAll$1(0, ["TEMPLATE"]);
         t3 = P.LinkedHashSet_LinkedHashSet(null, null, null, null);
         t3.addAll$1(0, t1);
-        H.assertSubtype(t3, "$isLinkedHashSet", [null], "$asLinkedHashSet");
         t1 = t3;
-        H.listSuperNativeTypeCheck(t2, "$isIterable");
         t3 = P.LinkedHashSet_LinkedHashSet(null, null, null, null);
-        t3.addAll$1(0, t2);
-        H.assertSubtype(t3, "$isLinkedHashSet", [null], "$asLinkedHashSet");
-        t2 = t3;
-        t3 = P.LinkedHashSet_LinkedHashSet(null, null, null, null);
-        t4 = P.String;
-        H.listSuperNativeTypeCheck(C.List_wSV, "$isIterable");
-        t5 = P.LinkedHashSet_LinkedHashSet(null, null, null, t4);
-        t5.addAll$1(0, C.List_wSV);
-        return new W._TemplatingNodeValidator(H.assertSubtype(H.assertSubtype(H.assertSubtype(t5, "$isLinkedHashSet", [t4], "$asLinkedHashSet"), "$isSet", [P.String], "$asSet"), "$isSet", [P.String], "$asSet"), H.assertSubtype(t1, "$isSet", [P.String], "$asSet"), H.assertSubtype(t2, "$isSet", [P.String], "$asSet"), H.assertSubtype(t3, "$isSet", [P.String], "$asSet"), null);
+        t4 = P.LinkedHashSet_LinkedHashSet(null, null, null, P.String);
+        t4.addAll$1(0, C.List_wSV);
+        return new W._TemplatingNodeValidator(t4, t2, t1, t3, null);
       }}
   },
   _TemplatingNodeValidator_closure: {
-    "^": "Closure:7;",
+    "^": "Closure;",
     call$1: function(attr) {
       return "TEMPLATE::" + H.S(attr);
-    },
-    $isFunction: true
+    }
   },
   _SvgNodeValidator: {
     "^": "Object;",
@@ -3790,39 +2803,32 @@ var $$ = Object.create(null);
       if (attributeName === "is" || C.JSString_methods.startsWith$1(attributeName, "on"))
         return false;
       return this.allowsElement$1(element);
-    },
-    $isNodeValidator: true
+    }
   },
   FixedSizeListIterator: {
     "^": "Object;_array,_html$_length,_position,_html$_current",
-    set$_html$_current: function(_current) {
-      this._html$_current = H.assertSubtypeOfRuntimeType(_current, H.getTypeArgumentByIndex(this, 0));
-    },
     moveNext$0: function() {
       var nextPosition, t1;
       nextPosition = this._position + 1;
       t1 = this._html$_length;
       if (nextPosition < t1) {
-        this.set$_html$_current(J.$index$asx(this._array, nextPosition));
+        this._html$_current = J.$index$asx(this._array, nextPosition);
         this._position = nextPosition;
         return true;
       }
-      this.set$_html$_current(null);
+      this._html$_current = null;
       this._position = t1;
       return false;
     },
     get$current: function() {
-      return H.assertSubtypeOfRuntimeType(this._html$_current, H.getTypeArgumentByIndex(this, 0));
-    },
-    $isIterator: true
+      return this._html$_current;
+    }
   },
   NodeValidator: {
-    "^": "Object;",
-    $isNodeValidator: true
+    "^": "Object;"
   },
   _SameOriginUriPolicy: {
-    "^": "Object;_hiddenAnchor,_loc",
-    $isUriPolicy: true
+    "^": "Object;_hiddenAnchor,_loc"
   },
   _ValidatingTreeSanitizer: {
     "^": "Object;validator",
@@ -3830,26 +2836,28 @@ var $$ = Object.create(null);
       new W._ValidatingTreeSanitizer_sanitizeTree_walk(this).call$1(node);
     },
     sanitizeNode$1: function(node) {
-      var attrs, t1, isAttr, keys, i, $name, t2;
+      var t1, attrs, t2, isAttr, keys, i, $name, t3;
       switch (node.nodeType) {
         case 1:
-          H.interceptedTypeCheck(node, "$isElement");
-          attrs = H.assertSubtype(new W._ElementAttributeMap(node), "$isMap", [P.String, P.String], "$asMap");
+          t1 = J.getInterceptor$x(node);
+          attrs = t1.get$attributes(node);
           if (!this.validator.allowsElement$1(node)) {
             window;
-            t1 = "Removing disallowed element <" + H.S(node.tagName) + ">";
-            H.voidTypeCheck(typeof console != "undefined" ? console.warn(t1) : null);
-            J.remove$0$ax(node);
+            t2 = "Removing disallowed element <" + H.S(node.tagName) + ">";
+            if (typeof console != "undefined")
+              console.warn(t2);
+            t1.remove$0(node);
             break;
           }
-          t1 = J.getInterceptor$x(node);
-          isAttr = t1.getAttribute$1(node, "is");
+          t2 = attrs._element;
+          isAttr = t2.getAttribute("is");
           if (isAttr != null)
             if (!this.validator.allowsAttribute$3(node, "is", isAttr)) {
               window;
-              t1 = "Removing disallowed type extension <" + H.S(node.tagName) + " is=\"" + isAttr + "\">";
-              H.voidTypeCheck(typeof console != "undefined" ? console.warn(t1) : null);
-              J.remove$0$ax(node);
+              t2 = "Removing disallowed type extension <" + H.S(node.tagName) + " is=\"" + isAttr + "\">";
+              if (typeof console != "undefined")
+                console.warn(t2);
+              t1.remove$0(node);
               break;
             }
           keys = C.JSArray_methods.toList$0(attrs.get$keys());
@@ -3857,15 +2865,16 @@ var $$ = Object.create(null);
             if (i >= keys.length)
               return H.ioore(keys, i);
             $name = keys[i];
-            if (!this.validator.allowsAttribute$3(node, J.toLowerCase$0$s($name), t1.getAttribute$1(node, $name))) {
+            if (!this.validator.allowsAttribute$3(node, J.toLowerCase$0$s($name), t2.getAttribute($name))) {
               window;
-              t2 = "Removing disallowed attribute <" + H.S(node.tagName) + " " + $name + "=\"" + H.S(t1.getAttribute$1(node, $name)) + "\">";
-              H.voidTypeCheck(typeof console != "undefined" ? console.warn(t2) : null);
-              t1.getAttribute$1(node, $name);
-              t1._removeAttribute$1(node, $name);
+              t3 = "Removing disallowed attribute <" + H.S(node.tagName) + " " + $name + "=\"" + H.S(t2.getAttribute($name)) + "\">";
+              if (typeof console != "undefined")
+                console.warn(t3);
+              t2.getAttribute($name);
+              t2.removeAttribute($name);
             }
           }
-          if (!!J.getInterceptor(node).$isTemplateElement)
+          if (!!t1.$isTemplateElement)
             this.sanitizeTree$1(node.content);
           break;
         case 8:
@@ -3876,12 +2885,10 @@ var $$ = Object.create(null);
         default:
           J.remove$0$ax(node);
       }
-    },
-    $is_ValidatingTreeSanitizer: true,
-    $isNodeTreeSanitizer: true
+    }
   },
   _ValidatingTreeSanitizer_sanitizeTree_walk: {
-    "^": "Closure:11;this_0",
+    "^": "Closure;this_0",
     call$1: function(node) {
       var child, nextChild;
       this.this_0.sanitizeNode$1(node);
@@ -3890,8 +2897,7 @@ var $$ = Object.create(null);
         nextChild = child.previousSibling;
         this.call$1(child);
       }
-    },
-    $isFunction: true
+    }
   }
 }],
 ["dart.dom.svg", "dart:svg", , P, {
@@ -3905,25 +2911,28 @@ var $$ = Object.create(null);
     "^": "Element;",
     set$innerHtml: function(receiver, value) {
       receiver.textContent = null;
-      this.append$1(receiver, this.createFragment$3$treeSanitizer$validator(receiver, value, null, null));
+      receiver.appendChild(this.createFragment$3$treeSanitizer$validator(receiver, value, null, null));
     },
     createFragment$3$treeSanitizer$validator: function(receiver, svg, treeSanitizer, validator) {
-      var t1, html, fragment, svgFragment, root, t2;
-      t1 = H.assertSubtype(H.setRuntimeTypeInfo([], [W.NodeValidator]), "$isList", [W.NodeValidator], "$asList");
+      var t1, html, fragment, svgFragment, root;
+      t1 = H.setRuntimeTypeInfo([], [W.NodeValidator]);
       validator = new W.NodeValidatorBuilder(t1);
-      C.JSArray_methods.add$1(t1, W._Html5NodeValidator$(null));
-      C.JSArray_methods.add$1(t1, W._TemplatingNodeValidator$());
-      C.JSArray_methods.add$1(t1, new W._SvgNodeValidator());
+      t1.push(W._Html5NodeValidator$(null));
+      t1.push(W._TemplatingNodeValidator$());
+      t1.push(new W._SvgNodeValidator());
       treeSanitizer = new W._ValidatingTreeSanitizer(validator);
       html = "<svg version=\"1.1\">" + svg + "</svg>";
       fragment = J.createFragment$2$treeSanitizer$x(document.body, html, treeSanitizer);
       svgFragment = document.createDocumentFragment();
       fragment.toString;
-      t1 = H.assertSubtype(new W._ChildNodeListLazy(fragment), "$isList", [W.Node], "$asList");
+      t1 = new W._ChildNodeListLazy(fragment);
       root = t1.get$single(t1);
-      for (t1 = J.getInterceptor$x(svgFragment); t2 = root.firstChild, t2 != null;)
-        t1.append$1(svgFragment, t2);
+      for (; t1 = root.firstChild, t1 != null;)
+        svgFragment.appendChild(t1);
       return svgFragment;
+    },
+    insertAdjacentHtml$2: function(receiver, where, text) {
+      throw H.wrapException(P.UnsupportedError$("Cannot invoke insertAdjacentHtml on SVG."));
     },
     $isSvgElement: true,
     "%": "SVGAElement|SVGAltGlyphDefElement|SVGAltGlyphElement|SVGAltGlyphItemElement|SVGAnimateElement|SVGAnimateMotionElement|SVGAnimateTransformElement|SVGAnimationElement|SVGCircleElement|SVGClipPathElement|SVGComponentTransferFunctionElement|SVGCursorElement|SVGDefsElement|SVGDescElement|SVGDiscardElement|SVGEllipseElement|SVGFEBlendElement|SVGFEColorMatrixElement|SVGFEComponentTransferElement|SVGFECompositeElement|SVGFEConvolveMatrixElement|SVGFEDiffuseLightingElement|SVGFEDisplacementMapElement|SVGFEDistantLightElement|SVGFEDropShadowElement|SVGFEFloodElement|SVGFEFuncAElement|SVGFEFuncBElement|SVGFEFuncGElement|SVGFEFuncRElement|SVGFEGaussianBlurElement|SVGFEImageElement|SVGFEMergeElement|SVGFEMergeNodeElement|SVGFEMorphologyElement|SVGFEOffsetElement|SVGFEPointLightElement|SVGFESpecularLightingElement|SVGFESpotLightElement|SVGFETileElement|SVGFETurbulenceElement|SVGFilterElement|SVGFontElement|SVGFontFaceElement|SVGFontFaceFormatElement|SVGFontFaceNameElement|SVGFontFaceSrcElement|SVGFontFaceUriElement|SVGForeignObjectElement|SVGGElement|SVGGeometryElement|SVGGlyphElement|SVGGlyphRefElement|SVGGradientElement|SVGGraphicsElement|SVGHKernElement|SVGImageElement|SVGLineElement|SVGLinearGradientElement|SVGMPathElement|SVGMarkerElement|SVGMaskElement|SVGMetadataElement|SVGMissingGlyphElement|SVGPathElement|SVGPatternElement|SVGPolygonElement|SVGPolylineElement|SVGRadialGradientElement|SVGRectElement|SVGSVGElement|SVGSetElement|SVGStopElement|SVGStyleElement|SVGSwitchElement|SVGSymbolElement|SVGTSpanElement|SVGTextContentElement|SVGTextElement|SVGTextPathElement|SVGTextPositioningElement|SVGTitleElement|SVGUseElement|SVGVKernElement|SVGViewElement;SVGElement"
@@ -3937,48 +2946,87 @@ var $$ = Object.create(null);
       if (max <= 0 || max > 4294967296)
         throw H.wrapException(P.RangeError$("max must be in range 0 < max \u2264 2^32, was " + max));
       return Math.random() * max >>> 0;
-    },
-    $isRandom: true
+    }
+  }
+}],
+["dart2js._js_primitives", "dart:_js_primitives", , H, {
+  "^": "",
+  printString: function(string) {
+    if (typeof dartPrint == "function") {
+      dartPrint(string);
+      return;
+    }
+    if (typeof console == "object" && typeof console.log != "undefined") {
+      console.log(string);
+      return;
+    }
+    if (typeof window == "object")
+      return;
+    if (typeof print == "function") {
+      print(string);
+      return;
+    }
+    throw "Unable to print message: " + String(string);
   }
 }],
 ["", "utakatanet.dart", , Z, {
   "^": "",
   main: function() {
-    var p, image, t1, h2;
-    H.interceptedTypeCheck(C.HtmlDocument_methods.querySelector$1(document, "body"), "$isBodyElement");
-    J.add$1$ax($.get$photos(), "20140216yasukuni.png");
-    J.add$1$ax($.get$photoDescs(), "\u9756\u56fd\u795e\u793e 2014.2.16");
-    J.add$1$ax($.get$photos(), "20140208kinkaku.png");
-    J.add$1$ax($.get$photoDescs(), "\u96ea\u306e\u91d1\u95a3 2014.2.8");
-    J.add$1$ax($.get$photos(), "20140208ginkaku.png");
-    J.add$1$ax($.get$photoDescs(), "\u96ea\u306e\u9280\u95a3 2014.2.8");
-    J.add$1$ax($.get$photos(), "20140125heijo.png");
-    J.add$1$ax($.get$photoDescs(), "\u5e73\u57ce\u5bae 2014.1.25");
-    J.add$1$ax($.get$photos(), "20131121eikan.png");
-    J.add$1$ax($.get$photoDescs(), "\u6c38\u89b3\u5802\u306e\u7d05\u8449 2013.11.21");
-    J.add$1$ax($.get$photos(), "20130804koutokuin.png");
-    J.add$1$ax($.get$photoDescs(), "\u9ad8\u5fb3\u9662\u938c\u5009\u5927\u4ecf 2013.8.4");
-    J.add$1$ax($.get$photos(), "20130804kamakura.png");
-    J.add$1$ax($.get$photoDescs(), "\u938c\u5009\u99c5 2013.8.4");
-    J.add$1$ax($.get$photos(), "20130804enoshima.png");
-    J.add$1$ax($.get$photoDescs(), "\u6c5f\u30ce\u5cf6\u304b\u3089\u306e\u98a8\u666f 2013.8.4");
-    J.add$1$ax($.get$photos(), "20131121eikan2.png");
-    J.add$1$ax($.get$photoDescs(), "\u6c38\u89b3\u5802\u306e\u7d05\u8449 2013.11.21");
-    J.add$1$ax($.get$photos(), "20140222yoshino1.png");
-    J.add$1$ax($.get$photoDescs(), "\u5409\u91ce \u9285\u306e\u9ce5\u5c45 2014.2.22");
-    J.add$1$ax($.get$photos(), "kemari.png");
-    J.add$1$ax($.get$photoDescs(), "\u8e74\u97a0\uff20\u4eac\u90fd\u5fa1\u82d1");
+    var p, line, image, t1, h2;
+    document.querySelector("body");
+    $.get$photos().push("20140216yasukuni.png");
+    $.get$photoDescs().push("\u9756\u56fd\u795e\u793e 2014.2.16");
+    $.get$photos().push("20140208kinkaku.png");
+    $.get$photoDescs().push("\u96ea\u306e\u91d1\u95a3 2014.2.8");
+    $.get$photos().push("20140208ginkaku.png");
+    $.get$photoDescs().push("\u96ea\u306e\u9280\u95a3 2014.2.8");
+    $.get$photos().push("20140125heijo.png");
+    $.get$photoDescs().push("\u5e73\u57ce\u5bae 2014.1.25");
+    $.get$photos().push("20131121eikan.png");
+    $.get$photoDescs().push("\u6c38\u89b3\u5802\u306e\u7d05\u8449 2013.11.21");
+    $.get$photos().push("20130804koutokuin.png");
+    $.get$photoDescs().push("\u9ad8\u5fb3\u9662\u938c\u5009\u5927\u4ecf 2013.8.4");
+    $.get$photos().push("20130804kamakura.png");
+    $.get$photoDescs().push("\u938c\u5009\u99c5 2013.8.4");
+    $.get$photos().push("20130804enoshima.png");
+    $.get$photoDescs().push("\u6c5f\u30ce\u5cf6\u304b\u3089\u306e\u98a8\u666f 2013.8.4");
+    $.get$photos().push("20131121eikan2.png");
+    $.get$photoDescs().push("\u6c38\u89b3\u5802\u306e\u7d05\u8449 2013.11.21");
+    $.get$photos().push("20140222yoshino1.png");
+    $.get$photoDescs().push("\u5409\u91ce \u9285\u306e\u9ce5\u5c45 2014.2.22");
+    $.get$photos().push("kemari.png");
+    $.get$photoDescs().push("\u8e74\u97a0\uff20\u4eac\u90fd\u5fa1\u82d1");
     p = C.C__JSRandom.nextInt$1($.get$photos().length);
-    image = H.interceptedTypeCheck(C.HtmlDocument_methods.querySelector$1(document, "img.top"), "$isImageElement");
+    line = "" + p;
+    H.printString(line);
+    image = document.querySelector("img.top");
     t1 = $.get$photos();
     if (p < 0 || p >= t1.length)
       return H.ioore(t1, p);
-    image.src = "topimage/" + t1[p];
-    h2 = C.HtmlDocument_methods.querySelector$1(document, "h2.photo-desc");
+    J.set$src$x(image, "topimage/" + t1[p]);
+    h2 = document.querySelector("h2.photo-desc");
     t1 = $.get$photoDescs();
     if (p >= t1.length)
       return H.ioore(t1, p);
     J.set$innerHtml$x(h2, "Photo: " + t1[p]);
+    Z.photo();
+  },
+  photo: function() {
+    var t1, i, section, t2, dir, pcount, j;
+    for (t1 = W._FrozenElementList$_wrap(document.querySelectorAll("section"), null)._nodeList, i = 0; i < t1.length; ++i) {
+      section = t1[i];
+      t2 = J.getInterceptor$x(section);
+      dir = t2.getAttribute$1(section, "dir");
+      pcount = section.getAttribute("pcount");
+      if (dir != null && pcount != null) {
+        pcount = H.Primitives_parseInt(pcount, null, null);
+        if (typeof pcount !== "number")
+          return H.iae(pcount);
+        j = 0;
+        for (; j < pcount; ++j)
+          t2.insertAdjacentHtml$2(section, "beforeend", "          <a href=\"photos/" + H.S(dir) + "/" + j + ".jpg\" rel=\"lightbox[" + H.S(dir) + "]\">\n            <img src=\"photos/" + H.S(dir) + "/thumbs/" + j + ".jpg\" rel=\"lightbox[" + H.S(dir) + "]\">\n          </a>\n          ");
+      }
+    }
   }
 },
 1],
@@ -3987,35 +3035,6 @@ Isolate.$finishClasses($$, $, null);
 $$ = null;
 
 // Runtime type support
-;(function() {
-  var TRUE = !0, _;
-  _ = W.Node;
-  _.$isNode = TRUE;
-  _.$isObject = TRUE;
-  _ = P.String;
-  _.$isString = TRUE;
-  _.$isObject = TRUE;
-  P.num.$isObject = TRUE;
-  _ = W.NodeValidator;
-  _.$isNodeValidator = TRUE;
-  _.$isObject = TRUE;
-  _ = P.$int;
-  _.$is$int = TRUE;
-  _.$isObject = TRUE;
-  P.Object.$isObject = TRUE;
-  _ = P.bool;
-  _.$isbool = TRUE;
-  _.$isObject = TRUE;
-  _ = W.Element;
-  _.$isElement = TRUE;
-  _.$isNode = TRUE;
-  _.$isObject = TRUE;
-  _ = W._Html5NodeValidator;
-  _.$is_Html5NodeValidator = TRUE;
-  _.$isNodeValidator = TRUE;
-  _.$isObject = TRUE;
-})();
-;
 // getInterceptor methods
 J.getInterceptor = function(receiver) {
   if (typeof receiver == "number") {
@@ -4061,6 +3080,17 @@ J.getInterceptor$ax = function(receiver) {
     return receiver;
   return J.getNativeInterceptor(receiver);
 };
+J.getInterceptor$ns = function(receiver) {
+  if (typeof receiver == "number")
+    return J.JSNumber.prototype;
+  if (typeof receiver == "string")
+    return J.JSString.prototype;
+  if (receiver == null)
+    return receiver;
+  if (!(receiver instanceof P.Object))
+    return J.UnknownJavaScriptObject.prototype;
+  return receiver;
+};
 J.getInterceptor$s = function(receiver) {
   if (typeof receiver == "string")
     return J.JSString.prototype;
@@ -4079,6 +3109,11 @@ J.getInterceptor$x = function(receiver) {
     return receiver;
   return J.getNativeInterceptor(receiver);
 };
+J.$add$ns = function(receiver, a0) {
+  if (typeof receiver == "number" && typeof a0 == "number")
+    return receiver + a0;
+  return J.getInterceptor$ns(receiver).$add(receiver, a0);
+};
 J.$eq = function(receiver, a0) {
   if (receiver == null)
     return a0 == null;
@@ -4092,29 +3127,11 @@ J.$index$asx = function(receiver, a0) {
       return receiver[a0];
   return J.getInterceptor$asx(receiver).$index(receiver, a0);
 };
-J._createElement$2$x = function(receiver, a0, a1) {
-  return J.getInterceptor$x(receiver)._createElement$2(receiver, a0, a1);
-};
-J._removeChild$1$x = function(receiver, a0) {
-  return J.getInterceptor$x(receiver)._removeChild$1(receiver, a0);
-};
-J.add$1$ax = function(receiver, a0) {
-  return J.getInterceptor$ax(receiver).add$1(receiver, a0);
-};
-J.append$1$x = function(receiver, a0) {
-  return J.getInterceptor$x(receiver).append$1(receiver, a0);
-};
-J.createContextualFragment$1$x = function(receiver, a0) {
-  return J.getInterceptor$x(receiver).createContextualFragment$1(receiver, a0);
-};
 J.createFragment$2$treeSanitizer$x = function(receiver, a0, a1) {
   return J.getInterceptor$x(receiver).createFragment$2$treeSanitizer(receiver, a0, a1);
 };
 J.createFragment$3$treeSanitizer$validator$x = function(receiver, a0, a1, a2) {
   return J.getInterceptor$x(receiver).createFragment$3$treeSanitizer$validator(receiver, a0, a1, a2);
-};
-J.createHtmlDocument$1$x = function(receiver, a0) {
-  return J.getInterceptor$x(receiver).createHtmlDocument$1(receiver, a0);
 };
 J.elementAt$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).elementAt$1(receiver, a0);
@@ -4134,17 +3151,11 @@ J.get$length$asx = function(receiver) {
 J.get$name$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$name(receiver);
 };
-J.getAttribute$1$x = function(receiver, a0) {
-  return J.getInterceptor$x(receiver).getAttribute$1(receiver, a0);
-};
-J.join$1$ax = function(receiver, a0) {
-  return J.getInterceptor$ax(receiver).join$1(receiver, a0);
+J.get$nodes$x = function(receiver) {
+  return J.getInterceptor$x(receiver).get$nodes(receiver);
 };
 J.remove$0$ax = function(receiver) {
   return J.getInterceptor$ax(receiver).remove$0(receiver);
-};
-J.selectNodeContents$1$x = function(receiver, a0) {
-  return J.getInterceptor$x(receiver).selectNodeContents$1(receiver, a0);
 };
 J.set$href$x = function(receiver, value) {
   return J.getInterceptor$x(receiver).set$href(receiver, value);
@@ -4152,8 +3163,8 @@ J.set$href$x = function(receiver, value) {
 J.set$innerHtml$x = function(receiver, value) {
   return J.getInterceptor$x(receiver).set$innerHtml(receiver, value);
 };
-J.substring$2$s = function(receiver, a0, a1) {
-  return J.getInterceptor$s(receiver).substring$2(receiver, a0, a1);
+J.set$src$x = function(receiver, value) {
+  return J.getInterceptor$x(receiver).set$src(receiver, value);
 };
 J.toLowerCase$0$s = function(receiver) {
   return J.getInterceptor$s(receiver).toLowerCase$0(receiver);
@@ -4161,15 +3172,12 @@ J.toLowerCase$0$s = function(receiver) {
 J.toString$0 = function(receiver) {
   return J.getInterceptor(receiver).toString$0(receiver);
 };
-C.HtmlDocument_methods = W.HtmlDocument.prototype;
 C.JSArray_methods = J.JSArray.prototype;
 C.JSInt_methods = J.JSInt.prototype;
 C.JSString_methods = J.JSString.prototype;
 C.NodeList_methods = W.NodeList.prototype;
 C.PlainJavaScriptObject_methods = J.PlainJavaScriptObject.prototype;
 C.UnknownJavaScriptObject_methods = J.UnknownJavaScriptObject.prototype;
-C.C_DynamicRuntimeType = new H.DynamicRuntimeType();
-C.C_VoidRuntimeType = new H.VoidRuntimeType();
 C.C__JSRandom = new P._JSRandom();
 C.JS_CONST_0 = function(hooks) {
   if (typeof dartExperimentalFixupGetTag != "function") return hooks;
@@ -4314,13 +3322,13 @@ C.List_yrN = H.setRuntimeTypeInfo(Isolate.makeConstantList(["A::href", "AREA::hr
 $.Closure_functionCounter = 0;
 $.BoundClosure_selfFieldNameCache = null;
 $.BoundClosure_receiverFieldNameCache = null;
-$.RuntimeFunctionType_inAssert = false;
 $.getTagFunction = null;
 $.alternateTagFunction = null;
 $.prototypeForTagFunction = null;
 $.dispatchRecordsForInstanceTags = null;
 $.interceptorsForUncacheableTags = null;
 $.initNativeDispatchFlag = null;
+$.printToZone = null;
 $.Element__parseDocument = null;
 $.Element__parseRange = null;
 $.Element__defaultValidator = null;
@@ -4331,36 +3339,27 @@ Isolate.$lazy($, "_toStringVisiting", "IterableBase__toStringVisiting", "get$Ite
   return [];
 });
 Isolate.$lazy($, "_allowedElements", "_Html5NodeValidator__allowedElements", "get$_Html5NodeValidator__allowedElements", function() {
-  var t1, t2;
-  t1 = ["A", "ABBR", "ACRONYM", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO", "B", "BDI", "BDO", "BIG", "BLOCKQUOTE", "BR", "BUTTON", "CANVAS", "CAPTION", "CENTER", "CITE", "CODE", "COL", "COLGROUP", "COMMAND", "DATA", "DATALIST", "DD", "DEL", "DETAILS", "DFN", "DIR", "DIV", "DL", "DT", "EM", "FIELDSET", "FIGCAPTION", "FIGURE", "FONT", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "I", "IFRAME", "IMG", "INPUT", "INS", "KBD", "LABEL", "LEGEND", "LI", "MAP", "MARK", "MENU", "METER", "NAV", "NOBR", "OL", "OPTGROUP", "OPTION", "OUTPUT", "P", "PRE", "PROGRESS", "Q", "S", "SAMP", "SECTION", "SELECT", "SMALL", "SOURCE", "SPAN", "STRIKE", "STRONG", "SUB", "SUMMARY", "SUP", "TABLE", "TBODY", "TD", "TEXTAREA", "TFOOT", "TH", "THEAD", "TIME", "TR", "TRACK", "TT", "U", "UL", "VAR", "VIDEO", "WBR"];
-  H.listSuperNativeTypeCheck(t1, "$isIterable");
-  t2 = P.LinkedHashSet_LinkedHashSet(null, null, null, null);
-  t2.addAll$1(0, t1);
-  return H.assertSubtype(H.assertSubtype(t2, "$isLinkedHashSet", [null], "$asLinkedHashSet"), "$isSet", [P.String], "$asSet");
+  var t1 = P.LinkedHashSet_LinkedHashSet(null, null, null, null);
+  t1.addAll$1(0, ["A", "ABBR", "ACRONYM", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO", "B", "BDI", "BDO", "BIG", "BLOCKQUOTE", "BR", "BUTTON", "CANVAS", "CAPTION", "CENTER", "CITE", "CODE", "COL", "COLGROUP", "COMMAND", "DATA", "DATALIST", "DD", "DEL", "DETAILS", "DFN", "DIR", "DIV", "DL", "DT", "EM", "FIELDSET", "FIGCAPTION", "FIGURE", "FONT", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "I", "IFRAME", "IMG", "INPUT", "INS", "KBD", "LABEL", "LEGEND", "LI", "MAP", "MARK", "MENU", "METER", "NAV", "NOBR", "OL", "OPTGROUP", "OPTION", "OUTPUT", "P", "PRE", "PROGRESS", "Q", "S", "SAMP", "SECTION", "SELECT", "SMALL", "SOURCE", "SPAN", "STRIKE", "STRONG", "SUB", "SUMMARY", "SUP", "TABLE", "TBODY", "TD", "TEXTAREA", "TFOOT", "TH", "THEAD", "TIME", "TR", "TRACK", "TT", "U", "UL", "VAR", "VIDEO", "WBR"]);
+  return t1;
 });
 Isolate.$lazy($, "_attributeValidators", "_Html5NodeValidator__attributeValidators", "get$_Html5NodeValidator__attributeValidators", function() {
-  return H.assertSubtype(P.LinkedHashMap_LinkedHashMap$_empty(null, null), "$isMap", [P.String, P.Function], "$asMap");
+  return P.LinkedHashMap_LinkedHashMap$_empty(null, null);
 });
 Isolate.$lazy($, "photos", "photos", "get$photos", function() {
-  return H.assertSubtype(H.setRuntimeTypeInfo([], [P.String]), "$isList", [P.String], "$asList");
+  return H.setRuntimeTypeInfo([], [P.String]);
 });
 Isolate.$lazy($, "photoDescs", "photoDescs", "get$photoDescs", function() {
-  return H.assertSubtype(H.setRuntimeTypeInfo([], [P.String]), "$isList", [P.String], "$asList");
+  return H.setRuntimeTypeInfo([], [P.String]);
 });
 // Native classes
 
-init.metadata = [{func: "bool__dynamic_dynamic", ret: P.bool, args: [null, null]},
+init.metadata = [{func: "dynamic__String", args: [P.String]},
+{func: "bool__dynamic_dynamic", ret: P.bool, args: [null, null]},
 {func: "int__dynamic", ret: P.$int, args: [null]},
 {func: "bool__Object_Object", ret: P.bool, args: [P.Object, P.Object]},
 {func: "int__Object", ret: P.$int, args: [P.Object]},
 {func: "bool__Element_String_String__Html5NodeValidator", ret: P.bool, args: [W.Element, P.String, P.String, W._Html5NodeValidator]},
-{func: "int_", ret: P.$int},
-{func: "args0"},
-{func: "args1", args: [null]},
-{func: "dynamic__dynamic_String", args: [null, P.String]},
-{func: "dynamic__String", args: [P.String]},
-{func: "args2", args: [null, null]},
-{func: "void__Node", void: true, args: [W.Node]},
 ];
 $ = null;
 Isolate = Isolate.$finishIsolateConstructor(Isolate);

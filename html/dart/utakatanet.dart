@@ -10,12 +10,16 @@ void main() {
   initPhotoData();
   Random r = new Random();
   int p = r.nextInt(photos.length);
+  print(p);
 
   ImageElement image = querySelector("img.top");
   image.src = "topimage/${photos[p]}";
 
   Element h2 = querySelector("h2.photo-desc");
   h2.innerHtml = "Photo: ${photoDescs[p]}";
+
+  // 写真ページだった場合には写真を読み込んでくれる
+  photo();
 }
 
 void initPhotoData(){
@@ -54,4 +58,23 @@ void initPhotoData(){
 }
 
 void photo(){
+  List<Element> sectionList = querySelectorAll("section");
+  for(int i = 0; i < sectionList.length; i++){
+    // section の中から dir と pcount を持つものだけ取り出して処理を行う
+    Element section = sectionList[i];
+    String dir = section.getAttribute("dir");
+    var pcount = section.getAttribute("pcount");
+
+    if(dir != null && pcount != null){
+      pcount = int.parse(pcount);
+      for(int j = 0; j < pcount; j++){
+        section.appendHtml(
+          """
+          <a href="photos/${dir}/${j}.jpg" rel="lightbox[${dir}]">
+            <img src="photos/${dir}/thumbs/${j}.jpg" rel="lightbox[${dir}]">
+          </a>
+          """);
+      }
+    }
+  }
 }
