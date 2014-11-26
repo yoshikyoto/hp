@@ -1,10 +1,8 @@
 <!DOCTIPE html>
 <html>
 <head>
-  <meta http-equiv="Content Type"
-   content="text/html" charset="utf-8" />
-  <script language="javascript" src="header.js"></script>
-  <script>include('Photos - @yoshiki_utakata');</script>
+  <!--#include virtual="/header.html" -->
+  <title>Photos(2014) - @yoshiki_utakata</title>
   
   <!-- config for lightbox -->
   <link rel="stylesheet" type="text/css" href="./lightbox/lightbox.css" media="screen,tv" />
@@ -12,12 +10,10 @@
 </head>
 
 <body>
-  <script>
-    header();
-    photoMenu();
-  </script>
+  <!--#include virtual="/nav.html" -->
+  <!--#include virtual="/pnav.html" -->
     <article>
-    <section>
+    <section dir="20140406arashiyama" pcount="4">
       <h2>2014年4月6日　京都嵐山　天龍寺・大覚寺</h2>
       <script>viewPhotos("20140406arashiyama", 4);</script>
     </section>
@@ -34,7 +30,6 @@
       <script>viewPhotos("20140426chokaigi", 6);</script>
     </section>
   </article>
-  
-  <script>footer();</script>
+  <!--#include virtual="/footer.html" -->
 </body>
 </html>

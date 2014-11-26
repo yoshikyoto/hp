@@ -52,3 +52,6 @@ void initPhotoData(){
   photos.add("kemari.png");
   photoDescs.add("蹴鞠＠京都御苑");
 }
+
+void photo(){
+}
